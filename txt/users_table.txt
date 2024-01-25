@@ -1,0 +1,78 @@
+<?php
+session_start();
+include "../db/connection.php";
+
+// Check if the user is an admin, if not, redirect them to the login page
+if ($_SESSION["isAdmin"] != 1) {
+    echo '<script>window.location.href = "login.php";</script>';
+    exit();
+}
+
+// Fetch all user data from the database
+$userQuery = "SELECT * FROM users";
+$userResult = mysqli_query($conn, $userQuery);
+
+if (!$userResult) {
+    die("Error: " . mysqli_error($conn));
+}
+
+// Fetch all user data into an associative array
+$users = mysqli_fetch_all($userResult, MYSQLI_ASSOC);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users table/title>
+    <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <?php include "../components/header.php"; ?>
+    <main class="container mx-auto my-8 p-8 bg-white rounded shadow-md">
+        
+        <?php include "../components/admin_aside.php"; ?>
+        <h1 class="text-2xl font-bold mb-8">Admin Dashboard</h1>
+
+        <!-- Display user data in a styled table -->
+        <div class="overflow-x-auto">
+            <?php if (isset($users) && is_array($users) && count($users) > 0) : ?>
+                <table class="min-w-full table-fixed">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Username</th>
+                            <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Password</th>
+                            <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Email</th>
+                            <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Admin</th>  
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($users as $user) : ?>
+                            <tr class="border-b">
+                                <td class="w-full lg:w-auto p-3 text-gray-800 text-center  border border-b block lg:table-cell relative lg:static"><?php echo $user['username']; ?></td>
+                                <td class="w-full lg:w-auto p-3 text-gray-800 text-center  border border-b block lg:table-cell relative lg:static"><?php echo $user['password']; ?></td>
+                                <td class="w-full lg:w-auto p-3 text-gray-800 text-center  border border-b block lg:table-cell relative lg:static"><?php echo $user['email']; ?></td>
+                                <td class="w-full lg:w-auto p-3 text-gray-800 text-center  border border-b block lg:table-cell relative lg:static">
+                                    <span class="inline-block px-2 py-1 rounded-full  <?php echo ($user['isAdmin'] == 1) ? 'bg-green-500' : 'bg-red-500'; ?>">
+                                        <?php echo ($user['isAdmin'] == 1) ? 'Yes' : 'No'; ?>
+                                    </span>
+                                </td>  
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else : ?>
+                <p class="text-red-500">No user data available.</p>
+            <?php endif; ?>
+        </div>
+    </main>
+
+
+    <?php include "../components/footer.php"; ?>
+</body>
+
+</html>
