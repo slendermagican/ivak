@@ -48,7 +48,7 @@ if (isset($_GET['category'])) {
                     <div class="bg-gray-200 p-4 rounded-md shadow-md clickable-thumbnail">
                         <h1 class="text-xl font-bold mb-2"><?= htmlspecialchars( $subcategory['category']) ?></h1>
                         <img src="<?= htmlspecialchars($subcategory['img_src']) ?>" alt="<?= htmlspecialchars($subcategory['img_alt']) ?>" class="w-full h-auto rounded-md mb-2">
-                        <p class="text-gray-700"><?= htmlspecialchars($subcategory['description']) ?></p>
+                        <p class="text-gray-700"><?= htmlspecialchars($subcategory['description']) ?> huq me surbi mozhe li da me pocheshesh</p>
                     </div>
                 </a>
             <?php endforeach; ?>
