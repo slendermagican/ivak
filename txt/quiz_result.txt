@@ -1,0 +1,66 @@
+<?php
+session_start();
+include "../db/connection.php";
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+if (!isset($_POST['quiz_id'])) {
+    header("Location: error.php");
+    exit();
+}
+
+$quiz_id = $_POST['quiz_id'];
+$user_id = $_SESSION['user_id'];
+
+// Fetch quiz result from the database using the quiz ID and user ID
+$quizResultQuery = "SELECT * FROM quiz_results WHERE quiz_id = '$quiz_id' AND user_id = '$user_id'";
+$quizResult = mysqli_query($conn, $quizResultQuery);
+
+if (!$quizResult) {
+    die("Error: " . mysqli_error($conn));
+}
+
+$quizResultData = mysqli_fetch_assoc($quizResult);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+</head>
+
+<body class="bg-gray-100">
+    <!-- Header -->
+    <?php include "../components/header.php"; ?>
+
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto mt-8">
+        <h1 class="text-3xl font-semibold mb-4">Quiz Results</h1>
+        <?php if ($quizResultData) : ?>
+            <div class="bg-white p-6 rounded-md shadow-md">
+                <p><strong>Quiz Date:</strong> <?php echo $quizResultData['quiz_date']; ?></p>
+                <p><strong>Score:</strong> <?php echo $quizResultData['score']; ?></p>
+                <h2 class="text-xl font-semibold mt-4">Questions</h2>
+                <ol class="list-decimal pl-4 mt-2">
+                    <!-- Question list goes here -->
+                </ol>
+            </div>
+        <?php else : ?>
+            <p class="text-red-600">No quiz results found for the provided token.</p>
+        <?php endif; ?>
+    </main>
+
+    <!-- Footer -->
+    <?php include "../components/footer.php"; ?>
+</body>
+
+</html>

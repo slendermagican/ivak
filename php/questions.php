@@ -92,10 +92,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     // Update the score and completion time in the quiz_results table
     $addScoreQuery = "UPDATE quiz_results SET score='$score', time_to_complete='$timeToComplete' WHERE id='$quiz_result_id'";
     mysqli_query($conn, $addScoreQuery);
-
+    $_SESSION["quiz_id"]=$quiz_id;
     // Redirect to a page indicating successful quiz submission
-    // header("Location: quiz_result.php");
-    exit();
+    header("Location: quiz_result.php");
+    // echo "<script>window.location.href = 'quiz_result.php';</script>";
+    
 }
 ?>
 
@@ -109,17 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     <title>Question</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        #timer {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #333;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 
 <body class="bg-gray-100 flex flex-col h-screen">
