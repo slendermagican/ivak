@@ -18,8 +18,8 @@ session_start();
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-<main> 
+<body class="flex flex-col h-screen">
+<main class="flex-grow"> 
 
 
     

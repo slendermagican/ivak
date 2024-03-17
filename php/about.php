@@ -16,13 +16,13 @@ session_start();
 
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex flex-col h-screen">
 
     <?php
     include "../components/header.php";
     ?>
     
-    <main>
+    <main class="flex-grow">
 
     </main>
     

@@ -48,12 +48,12 @@ if (isset($_POST["reset_request"])) {
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex flex-col h-screen">
     <?php
     include "../components/header.php";
     ?>
 
-    <main class="container mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md">
+    <main class="container flex-grow mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md">
         <!-- Display reset feedback here -->
         <?php if (!empty($resetFeedback)) : ?>
             <div class="mb-4 text-red-500">

@@ -25,7 +25,7 @@
     <div class="mb-4 md:mb-0 md:w-1/2 md:border-r md:border-white md:pr-4">
         <!-- Contact Information -->
         <p class="mb-2">Contact us: <a href="mailto:slendermagican@gmail.com" class="text-blue-300">info.mail@gmail.com</a></p>
-        <p class="mb-2">Phone: <a href="tel:0881234567" class="text-blue-300">088 123 45 67</a></p>
+        <p class="mb-2">Phone: <a href="tel:0881234567" class="text-blue-300">088 123 4567</a></p>
         <p>Visit us at: Your Address</p>
         <!-- Horizontal Line -->
         <hr class="w-full border-white my-2 md:hidden">

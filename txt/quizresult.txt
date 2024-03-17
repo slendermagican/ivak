@@ -1,0 +1,55 @@
+<?php
+session_start();
+include "../db/connection.php";
+
+if (isset($_GET['quizForm'])) {
+    // Retrieve selected answers from the form
+    $selectedAnswers = $_GET['selectedAnswer'];
+
+    // Initialize variables for score calculation
+    $totalQuestions = count($selectedAnswers);
+    $correctAnswers = 0;
+
+    // Loop through each question
+    foreach ($selectedAnswers as $questionId => $selectedAnswer) {
+        // Fetch correct answer from the database
+        $questionQuery = "SELECT correct_answer_index FROM questions WHERE id = $questionId";
+        $questionResult = mysqli_query($conn, $questionQuery);
+        $row = mysqli_fetch_assoc($questionResult);
+        $correctAnswerIndex = $row['correct_answer_index'];
+
+        // Check if selected answer matches the correct answer
+        if ($selectedAnswer == $correctAnswerIndex) {
+            $correctAnswers++;
+        }
+    }
+
+    // Calculate score
+    $score = ($correctAnswers / $totalQuestions) * 100;
+
+    // Display quiz result with the same style as on the quiz page
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Quiz Result</title>
+        <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-100 flex flex-col h-screen">
+        <?php include "../components/header.php"; ?>
+        <main class="flex-grow">
+            <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
+                <h2 class="text-2xl font-bold">Quiz Result</h2>
+                <hr>
+                <p class="my-4 text-2xl">You scored <?php echo $score; ?>%</p>
+            </div>
+        </main>
+        <?php include "../components/footer.php"; ?>
+    </body>
+    </html>
+    <?php
+}
+?>

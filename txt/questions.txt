@@ -1,0 +1,139 @@
+<?php
+
+session_start();
+include "../db/connection.php";
+
+// Check if question ID is provided in the URL
+if (isset($_GET['quiz_id'])) {
+    $quiz_id = $_GET['quiz_id'];
+
+    // Fetch question data from the database
+    $questionQuery = "SELECT * FROM questions WHERE quiz_id = $quiz_id";
+    $questionResult = mysqli_query($conn, $questionQuery);
+
+    if (!$questionResult) {
+        die("Error: " . mysqli_error($conn));
+    }
+
+    $questions = mysqli_fetch_all($questionResult, MYSQLI_ASSOC);
+} else {
+    // Redirect to quizzes.php if no question ID is provided
+    header("Location: quizzes.php");
+    exit();
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question</title>
+    <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 flex flex-col h-screen">
+
+    <?php include "../components/header.php"; ?>
+
+    <main class="flex-grow">
+
+        <!-- Question Form -->
+        <form id="quizForm" action="<?php htmlspecialchars("quizresults.php") ?>" method="get" onsubmit="return validateForm()">
+            <?php foreach ($questions as $question) { ?>
+                <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
+                    <!-- Question Text -->
+                    <h2 class="text-2xl font-bold"><?php echo "Question " . htmlspecialchars($question['id']); ?></h2>
+                    <hr>
+                    <h3 class="my-4 text-2xl"><?php echo htmlspecialchars($question['question_text']); ?></h3>
+                    <img src="<?php echo htmlspecialchars($question['img_src']) ?>" alt="<?php echo htmlspecialchars($question['img_alt']) ?>" class="w-full h-full object-cover rounded-md mb-2">
+                    <!-- Create a 2x2 grid of buttons for answers -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <?php for ($i = 1; $i <= 4; $i++) { ?>
+                            <input type="radio" id="answer<?= $i ?>_<?= $question['id'] ?>" name="selectedAnswer[<?= $question['id'] ?>]" value="<?= $i ?>" class="hidden">
+                            <label for="answer<?= $i ?>_<?= $question['id'] ?>" class="relative cursor-pointer">
+                                <button type="button" class="w-full px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300 ease-in-out" onclick="handleButtonClick(this, 'answer<?= $i ?>_<?= $question['id'] ?>')">
+                                    <?= htmlspecialchars($question["answer{$i}"]); ?>
+                                </button>
+                            </label>
+                        <?php } ?>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <div class="flex justify-center mt-4 mb-4">
+                <input type="submit" name="quizSubmit" class="w-2/5 py-2 rounded-md text-white bg-green-500 hover:bg-green-700 font-semibold shadow-md focus:outline-none focus:ring focus:border-blue-green transition duration-300 ease-in-out">
+            </div>
+        </form>
+        <div>
+        </div>
+
+        <script>
+            var selectedAnswers = {};
+
+            function handleButtonClick(button, answerId) {
+                var questionId = answerId.split('_')[1];
+                var parentDiv = button.closest('.max-w-3xl'); // Find the closest parent div
+
+                // Uncheck all radio buttons with the same name within the same div
+                var radioButtons = parentDiv.querySelectorAll('input[name="selectedAnswer[' + questionId + ']"]');
+                radioButtons.forEach(function(radioButton) {
+                    radioButton.checked = false;
+                });
+
+                // Revert the appearance of all buttons in the same div
+                var buttonsInDiv = parentDiv.querySelectorAll('button');
+                buttonsInDiv.forEach(function(btn) {
+                    btn.classList.remove('bg-red-500', 'hover:bg-red-700'); // Remove the custom class and hover effect
+                    btn.classList.add('bg-blue-500', 'hover:bg-blue-700'); // Add the default class and hover effect
+                });
+
+                // Save the selected answer to the object
+                selectedAnswers[questionId] = answerId;
+
+                // Change the color of the clicked button
+                button.classList.remove('bg-blue-500', 'hover:bg-blue-700'); // Remove the default class and hover effect
+                button.classList.add('bg-red-500', 'hover:bg-red-700'); // Add the custom class and hover effect
+
+                // Log selected answers in the console
+                console.log(selectedAnswers);
+            }
+
+            // Add an event listener to revert the style when the button loses focus
+            document.addEventListener('click', function(event) {
+                var clickedElement = event.target;
+                var parentDiv = clickedElement.closest('.max-w-3xl'); // Find the closest parent div
+                var allButtons = parentDiv.querySelectorAll('button');
+
+                allButtons.forEach(function(btn) {
+                    if (btn !== clickedElement && !btn.classList.contains('bg-blue-500')) {
+                        // Revert the appearance of the button when it loses focus within the same div
+                        btn.classList.remove('bg-red-500', 'hover:bg-red-700'); // Remove the custom class and hover effect
+                        btn.classList.add('bg-blue-500', 'hover:bg-blue-700'); // Add the default class and hover effect
+                    }
+                });
+            });
+
+            // Function to validate form submission
+            function validateForm() {
+                for (var key in selectedAnswers) {
+                    if (!selectedAnswers.hasOwnProperty(key)) continue;
+                    if (!selectedAnswers[key]) {
+                        alert("Please select an answer for each question.");
+                        return false;
+                    }
+                }
+                return true;
+            }
+        </script>
+
+    </main>
+
+    <?php include "../components/footer.php"; ?>
+
+</body>
+
+</html>

@@ -19,6 +19,7 @@ if (isset($_POST["login"])) {
         //not saving the passoword in the session because it's a sensitive data
         $_SESSION["isAdmin"] = $userData["isAdmin"];
         $_SESSION["username"] = $userData["username"];
+        $_SESSION["user_id"] = $userData["id"];
         $_SESSION["email"] = $userData["email"];
         // $_SESSION["password"] = $pass;
 
@@ -47,12 +48,12 @@ if (isset($_POST["login"])) {
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex flex-col h-screen">
     <?php
     include "../components/header.php";
     ?>
 
-    <main class="container mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md">
+    <main class="container flex-grow mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md">
         <!-- Display login feedback here -->
         <?php if (!empty($loginFeedback)) : ?>
             <div class="mb-4 text-red-500">

@@ -40,26 +40,23 @@ if (isset($_POST["register"])) {
             die("Error: " . mysqli_error($conn));
         }
 
-        $isAdminQuery = "SELECT isAdmin FROM users WHERE username='$user'";
-        $result = mysqli_query($conn, $isAdminQuery);
-
-        if (!$result) {
-            die("Error: " . mysqli_error($conn));
-        }
-
-        //not saving the passoword in the session because it's a sensitive data
-        $_SESSION["isAdmin"] = mysqli_fetch_assoc($result)["isAdmin"];
+        // Retrieve the last inserted ID
+        $userId = mysqli_insert_id($conn);
+        
+        // Save user data in session variables(except the password because it's a sensitive data)
+        $_SESSION["userId"] = $userId;
         $_SESSION["username"] = $user;
-        // $_SESSION["password"] = $pass;
         $_SESSION["email"] = $email;
+        $_SESSION["isAdmin"] = 0;
 
         echo "Registration successful!";
 
-        // header("Location: index.php"); прави проблеми на някои браузъри
+        // Redirect to index.php
         echo '<script>window.location.href = "index.php";</script>';
         exit();
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +71,7 @@ if (isset($_POST["register"])) {
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
 </head>
 
-<body class="bg-gray-100 flex flex-col min-h-screen">
+<body class="bg-gray-100 flex flex-col h-screen">
     <?php
     include "../components/header.php";
     ?>
