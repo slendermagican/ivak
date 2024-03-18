@@ -45,36 +45,34 @@ $result = mysqli_query($conn, $query);
     ?>
 
     <main class="flex-grow">
-        <div class="container mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
-            <h1 class="text-3xl font-semibold mb-4">Leaderboard</h1>
-            <div class="overflow-x-auto">
-                <table id="leaderboard" class="stripe hover" style="width:100%">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="px-4 py-2">Username</th>
-                            <th class="px-4 py-2">Category</th>
-                            <th class="px-4 py-2">Subcategory</th>
-                            <th class="px-4 py-2">Quiz</th>
-                            <th class="px-4 py-2">Score</th>
-                            <th class="px-4 py-2">Time to Complete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>";
-                            echo "<td class='border px-4 py-2'>{$row['username']}</td>";
-                            echo "<td class='border px-4 py-2'>{$row['category']}</td>";
-                            echo "<td class='border px-4 py-2'>{$row['subcategory']}</td>";
-                            echo "<td class='border px-4 py-2'>{$row['quiz']}</td>";
-                            echo "<td class='border px-4 py-2'>{$row['score']}</td>";
-                            echo "<td class='border px-4 py-2'>{$row['time_to_complete']}</td>";
-                            echo "</tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="container mx-auto mt-8">
+            <table id="leaderboard" class="stripe hover" style="width:100%">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2">Username</th>
+                        <th class="px-4 py-2">Category</th>
+                        <th class="px-4 py-2">Subcategory</th>
+                        <th class="px-4 py-2">Quiz</th>
+                        <th class="px-4 py-2">Score</th>
+                        <th class="px-4 py-2">Time to Complete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Output leaderboard data
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<tr>";
+                        echo "<td class='border px-4 py-2'>{$row['username']}</td>";
+                        echo "<td class='border px-4 py-2'><img src='{$row['category_img']}' alt='Category Icon' class='w-16 h-9 mr-2 inline-block align-middle'>{$row['category']}</td>";
+                        echo "<td class='border px-4 py-2'><img src='{$row['subcategory_img']}' alt='Subcategory Icon' class='w-16 h-9 mr-2 inline-block align-middle'>{$row['subcategory']}</td>";
+                        echo "<td class='border px-4 py-2'><img src='{$row['quiz_img']}' alt='Quiz Icon' class='w-16 h-9 mr-2 inline-block align-middle'>{$row['quiz']}</td>";
+                        echo "<td class='border px-4 py-2'>{$row['score']}</td>";
+                        echo "<td class='border px-4 py-2'>{$row['time_to_complete']}</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
     </main>
 
