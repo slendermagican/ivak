@@ -16,6 +16,8 @@ if (!isset($_SESSION['quiz_id'])) {
 
 $quiz_id = $_SESSION['quiz_id'];
 $user_id = $_SESSION['user_id'];
+//Clear the session from the quiz_id
+unset($_SESSION["quiz_id"]);
 
 
 // Fetch the last quiz ID taken by the user
@@ -74,40 +76,47 @@ $questions = mysqli_fetch_all($questionResult, MYSQLI_ASSOC);
 
 </head>
 
-<body class="bg-gray-100 flex flex-col h-screen">
+<body class="bg-gray-100 flex flex-col h-full">
     <?php include "../components/header.php"; ?>
 
-    <h1 class="text-3xl font-bold text-center mt-8">Quiz Result</h1>
-    <p class="text-center text-gray-600">Quiz ID: <?= $quiz_id ?></p>
+    <div class="flex-grow mb-8">
+        <h1 class="text-3xl font-bold text-center mt-8">Quiz Result</h1>
+        <p class="text-center text-gray-600">Quiz ID: <?= $quiz_id ?></p>
+        <p class="text-center text-gray-600">Quiz Result ID: <?= $quizResultId ?></p>
 
 
-    <?php
-for ($i = 0; $i < count($questions); $i++) {
-    $question = $questions[$i];
-    $questionResult = $questionResults[$i];
-    
-    // Questions
-    echo "Question ID: " . $question['id'] . "<br>";
-    echo "Question Text: " . $question['question_text'] . "<br>";
-    echo "Image Source: " . $question['img_src'] . "<br>";
-    echo "Image Alt: " . $question['img_alt'] . "<br>";
-    echo "Answer 1: " . $question['answer1'] . "<br>";
-    echo "Answer 2: " . $question['answer2'] . "<br>";
-    echo "Answer 3: " . $question['answer3'] . "<br>";
-    echo "Answer 4: " . $question['answer4'] . "<br>";
-    echo "Correct Answer Index: " . $question['correct_answer_index'] . "<br>";
-    echo "Quiz ID: " . $question['quiz_id'] . "<br>";
-    
-    // Results
-    echo "Question Result ID: " . $questionResult['id'] . "<br>";
-    echo "Quiz Result ID: " . $questionResult['quiz_result_id'] . "<br>";
-    echo "User Answer Index: " . $questionResult['user_answer_index'] . "<br>";
-    echo "Is Correct: " . ($questionResult['is_correct'] ? 'Yes' : 'No') . "<br>";
-    
-    echo "</br>"; 
-}
-?>
-        
+        <?php
+        for ($i = 0; $i < count($questions); $i++) {
+            $question = $questions[$i];
+            $questionResult = $questionResults[$i];
+            echo "<div class='max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md border-2 border-solid " . ($questionResult['is_correct'] == 0 ? 'border-rose-500' : 'border-lime-500') . "' >";
+            echo "<h2 class='text-2xl font-bold'>Question " . htmlspecialchars($question['id']) . "</h2>";
+            echo "<hr>";
+            echo "<h3 class='my-4 text-2xl'>" . htmlspecialchars($question['question_text']) . "</h3>";
+            echo "<img src=" . htmlspecialchars($question['img_src']) . " alt=" . htmlspecialchars($question['img_alt']) . " class='w-full object-cover rounded-md mb-2' style='max-height: 70vh;'>";
+
+            echo "<div class='grid grid-cols-2 gap-4'>";
+            for ($j = 1; $j <= 4; $j++) {
+                echo '<input type="radio" id="question' . $question['id'] . '_' . $j . '" name="' . $question['id'] . '" value="' . $j . '" style="display: none;">';
+                echo "<label for='question" . $question['id'] . '_' . $j . "' class='w-full px-4 py-2 rounded-md relative pointer text-white text-center " . 
+                    (($questionResult['user_answer_index'] == $j && $questionResult['is_correct'] == 0) ? 'bg-red-500 hover:bg-red-700 focus:border-red-300' : '') . 
+                    (($question['correct_answer_index'] == $j) ? 'bg-green-500 hover:bg-green-700 focus:border-green-300' : '') . 
+                    " bg-blue-500 hover:bg-blue-700 focus:border-blue-300 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring transition duration-300 ease-in-out'>" . 
+                    htmlspecialchars($question["answer{$j}"]) . 
+                '</label>';
+            }
+            
+            echo "</div>";
+            echo "</div>";
+        }
+        ?>
+        <div class="flex justify-evenly mt-8">
+            <button class="max-w-2/5 px-4 py-2 rounded-md relative pointer text-white text-center bg-red-500 hover:bg-red-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring focus:border-red-300 transition duration-300 ease-in-out">Report a problem</button>
+            <a href="index.php"><button class="max-w-2/5 px-4 py-2 rounded-md relative pointer text-white text-center bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300 ease-in-out">Go home</button></a>
+        </div>
+
+    </div>
+
 
     <?php include "../components/footer.php"; ?>
 </body>

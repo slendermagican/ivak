@@ -1,10 +1,17 @@
 <?php
-// (Your existing PHP code)
+session_start();
+include "../db/connection.php";
 
-// Process form submission to add a new category
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // (Your existing PHP code)
-}
+// Initialize error and success message variables
+$errorMsg = '';
+$successMsg = '';
+
+// Check if the user is an admin, if not, redirect them to the login page
+if ($_SESSION["isAdmin"] != 1) {
+    echo '<script>window.location.href = "../../ivak/php/index.php";</script>';
+    exit();
+} 
+
 ?>
 
 <!DOCTYPE html>
