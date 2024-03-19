@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 $user_id = $_SESSION['user_id'];
+$index = 0; //for Question number
 
 if (isset($_GET['quiz_id'])) {
     $quiz_id = $_GET['quiz_id'];
@@ -92,14 +93,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     // Update the score and completion time in the quiz_results table
     $addScoreQuery = "UPDATE quiz_results SET score='$score', time_to_complete='$timeToComplete' WHERE id='$quiz_result_id'";
     mysqli_query($conn, $addScoreQuery);
-    $_SESSION["quiz_id"]=$quiz_id;
+    $_SESSION["quiz_id"] = $quiz_id;
     // Redirect to a page indicating successful quiz submission
     header("Location: quiz_result.php");
     // echo "<script>window.location.href = 'quiz_result.php';</script>";
-    
 }
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -117,23 +117,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     <?php include "../components/header.php"; ?>
 
     <main class="flex-grow">
+
         <!-- Question Form -->
         <form id="quizForm" action="<?php htmlspecialchars("quizresults.php") ?>" method="post" onsubmit="return validateForm()">
-        <input type="hidden" name="startTime" value="<?php echo time(); ?>"> <!-- Add hidden input field for start time -->
-            <?php foreach ($questions as $question) { ?>
+            <input type="hidden" name="startTime" value="<?php echo time(); ?>"> <!-- Add hidden input field for start time -->
+            <?php foreach ($questions as $question) {
+                $index++; ?>
                 <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
-                    <h2 class="text-2xl font-bold"><?php echo "Question " . htmlspecialchars($question['id']); ?></h2>
+                    <h2 class="text-2xl font-bold"><?php echo "Question " . ($index); ?></h2>
                     <hr>
                     <h3 class="my-4 text-2xl"><?php echo htmlspecialchars($question['question_text']); ?></h3>
                     <img src="<?php echo htmlspecialchars($question['img_src']) ?>" alt="<?php echo htmlspecialchars($question['img_alt']) ?>" class="w-full object-cover rounded-md mb-2" style="max-height: 70vh;">
                     <div class="grid grid-cols-2 gap-4">
-                        <?php for ($i = 1; $i <= 4; $i++) { ?>
-                            <input type="radio" id="question<?= $question['id'] ?>_<?= $i ?>" name="<?= $question['id'] ?>" value="<?= $i ?>" style="display: none;">
-                            <label for="question<?= $question['id'] ?>_<?= $i ?>" class="w-full px-4 py-2 rounded-md relative pointer text-white text-center bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300 ease-in-out">
+                        <?php for ($i = 1; $i <= 4; $i++) {
+                            $isChecked = isset($_POST[$question['id']]) && $_POST[$question['id']] == $i;
+                            $radioStyleClass = $isChecked ? 'bg-green-500 focus:bg-green-300 hover:bg-green-700' : 'bg-blue-500 focus:bg-blue-300 hover:bg-blue-700';
+                        ?>
+                            <input type="radio" id="question<?= $question['id'] ?>_<?= $i ?>" name="<?= $question['id'] ?>" value="<?= $i ?>" class="hidden" <?= $isChecked ? 'checked' : '' ?>>
+                            <label for="question<?= $question['id'] ?>_<?= $i ?>" class="w-full py-2 px-4 flex items-center text-center justify-center text-white <?= $radioStyleClass ?> font-semibold rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300 ease-in-out h-16">
                                 <?= htmlspecialchars($question["answer{$i}"]); ?>
                             </label>
                         <?php } ?>
-
                     </div>
                 </div>
             <?php } ?>
@@ -141,61 +145,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
                 <input type="submit" name="quizSubmit" class="w-2/5 py-2 rounded-md text-white bg-green-500 hover:bg-green-700 font-semibold shadow-md focus:outline-none focus:ring focus:border-blue-green transition duration-300 ease-in-out">
             </div>
         </form>
+
     </main>
 
     <div class="fixed top-10 right-10 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg" id="timer">00:00:00</div>
 
-<script>
-    // Creating an array to save which buttons are clicked
-    let selectedAnswers = {};
-    // Get all radio buttons within each group
-    const groups = document.querySelectorAll('[type=radio]');
-    // Timer element
-    const timerElement = document.getElementById('timer');
-    // Start time
-    const startTime = <?php echo time(); ?>;
-
-    // Function to update the timer
-    function updateTimer() {
-        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-        const elapsedTime = currentTime - startTime;
-        const hours = Math.floor(elapsedTime / 3600);
-        const minutes = Math.floor((elapsedTime % 3600) / 60);
-        const seconds = elapsedTime % 60;
-        // Format the time as HH:MM:SS
-        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        // Update the timer element
-        timerElement.textContent = formattedTime;
-    }
-
-    // Update the timer every second
-    setInterval(updateTimer, 1000);
-
-    // Add event listener to each radio button
-    groups.forEach(group => {
-        group.addEventListener('change', function() {
-            // Change back the style of no longer clicked radio buttons within the same question
-            const groupRadios = document.querySelectorAll(`[name="${this.name}"]`);
-            groupRadios.forEach(radio => {
-                radio.nextElementSibling.classList.add('bg-blue-500');
-                radio.nextElementSibling.classList.add('focus:bg-blue-300');
-                radio.nextElementSibling.classList.add('hover:bg-blue-700');
-            });
-
-            // Apply style to the clicked radio button
-            if (this.checked) {
-                // Remove old style
-                this.nextElementSibling.classList.remove('bg-blue-500');
-                this.nextElementSibling.classList.remove('focus:bg-blue-300');
-                this.nextElementSibling.classList.remove('hover:bg-blue-700');
-                // Add new style
-                this.nextElementSibling.classList.add('bg-green-500');
-                this.nextElementSibling.classList.add('focus:bg-green-300');
-                this.nextElementSibling.classList.add('hover:bg-green-700');
-                selectedAnswers[this.name] = this.value;
-                console.log(selectedAnswers);
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listener to the parent element of radio buttons
+        document.getElementById('quizForm').addEventListener('change', function(event) {
+            const target = event.target;
+            if (target.type === 'radio') {
+                updateRadioStyle(target);
             }
         });
+
+        // Function to update radio button style
+        function updateRadioStyle(radioButton) {
+            const siblings = Array.from(radioButton.parentElement.children);
+            siblings.forEach(sibling => {
+                sibling.classList.remove('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
+                sibling.classList.add('bg-blue-500', 'focus:bg-blue-300', 'hover:bg-blue-700');
+            });
+            radioButton.nextElementSibling.classList.remove('bg-blue-500', 'focus:bg-blue-300', 'hover:bg-blue-700');
+            radioButton.nextElementSibling.classList.add('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
+        }
+
+        // Timer functionality
+        const timerElement = document.getElementById('timer');
+        const startTime = <?php echo time(); ?>;
+
+        function updateTimer() {
+            const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+            const elapsedTime = currentTime - startTime;
+            const hours = Math.floor(elapsedTime / 3600);
+            const minutes = Math.floor((elapsedTime % 3600) / 60);
+            const seconds = elapsedTime % 60;
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerElement.textContent = formattedTime;
+        }
+
+        setInterval(updateTimer, 1000);
     });
 
     function validateForm() {
@@ -246,6 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
         return allAnswered;
     }
 </script>
+
 
     <?php include "../components/footer.php"; ?>
 

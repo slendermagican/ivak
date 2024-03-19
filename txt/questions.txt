@@ -1,139 +1,179 @@
-<?php
+//вариант 1 
+CREATE TABLE quiz_problem_reports (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    quiz_id INT,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
+    description TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
+<?php
 session_start();
 include "../db/connection.php";
 
-// Check if question ID is provided in the URL
-if (isset($_GET['quiz_id'])) {
-    $quiz_id = $_GET['quiz_id'];
-
-    // Fetch question data from the database
-    $questionQuery = "SELECT * FROM questions WHERE quiz_id = $quiz_id";
-    $questionResult = mysqli_query($conn, $questionQuery);
-
-    if (!$questionResult) {
-        die("Error: " . mysqli_error($conn));
-    }
-
-    $questions = mysqli_fetch_all($questionResult, MYSQLI_ASSOC);
-} else {
-    // Redirect to quizzes.php if no question ID is provided
-    header("Location: quizzes.php");
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit();
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitQuizProblem'])) {
+    // Validate input
+    $quizId = $_POST['quiz_id'];
+    $description = $_POST['description'];
+
+    // Insert the problem report into the database
+    $userId = $_SESSION['user_id'];
+    $insertReportQuery = "INSERT INTO quiz_problem_reports (user_id, quiz_id, description) VALUES ('$userId', '$quizId', '$description')";
+    $result = mysqli_query($conn, $insertReportQuery);
+    if (!$result) {
+        die("Error: " . mysqli_error($conn));
+    }
+    // Redirect back to the quiz page or display a success message
+    // header("Location: quiz_page.php?quiz_id=$quizId");
+    echo "Problem reported successfully!";
+    exit();
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question</title>
-    <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
+Certainly! I'll provide you with the additional PHP code to handle the submission of problem reports for both options: specific to quizzes and for the entire website.
 
-<body class="bg-gray-100 flex flex-col h-screen">
+Option 1: Problem Reports Specific to Quizzes
+php
+Copy code
+<?php
+session_start();
+include "../db/connection.php";
 
-    <?php include "../components/header.php"; ?>
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-    <main class="flex-grow">
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitQuizProblem'])) {
+    // Validate input
+    $quizId = $_POST['quiz_id'];
+    $description = $_POST['description'];
 
-        <!-- Question Form -->
-        <form id="quizForm" action="<?php htmlspecialchars("quizresults.php") ?>" method="get" onsubmit="return validateForm()">
-            <?php foreach ($questions as $question) { ?>
-                <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
-                    <!-- Question Text -->
-                    <h2 class="text-2xl font-bold"><?php echo "Question " . htmlspecialchars($question['id']); ?></h2>
-                    <hr>
-                    <h3 class="my-4 text-2xl"><?php echo htmlspecialchars($question['question_text']); ?></h3>
-                    <img src="<?php echo htmlspecialchars($question['img_src']) ?>" alt="<?php echo htmlspecialchars($question['img_alt']) ?>" class="w-full h-full object-cover rounded-md mb-2">
-                    <!-- Create a 2x2 grid of buttons for answers -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <?php for ($i = 1; $i <= 4; $i++) { ?>
-                            <input type="radio" id="answer<?= $i ?>_<?= $question['id'] ?>" name="selectedAnswer[<?= $question['id'] ?>]" value="<?= $i ?>" class="hidden">
-                            <label for="answer<?= $i ?>_<?= $question['id'] ?>" class="relative cursor-pointer">
-                                <button type="button" class="w-full px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300 ease-in-out" onclick="handleButtonClick(this, 'answer<?= $i ?>_<?= $question['id'] ?>')">
-                                    <?= htmlspecialchars($question["answer{$i}"]); ?>
-                                </button>
-                            </label>
-                        <?php } ?>
-                    </div>
-                </div>
-            <?php } ?>
+    // Insert the problem report into the database
+    $userId = $_SESSION['user_id'];
+    $insertReportQuery = "INSERT INTO quiz_problem_reports (user_id, quiz_id, description) VALUES ('$userId', '$quizId', '$description')";
+    $result = mysqli_query($conn, $insertReportQuery);
+    if (!$result) {
+        die("Error: " . mysqli_error($conn));
+    }
+    // Redirect back to the quiz page or display a success message
+    // header("Location: quiz_page.php?quiz_id=$quizId");
+    echo "Problem reported successfully!";
+    exit();
+}
+?>
+Option 2: Problem Reports for the Entire Website
+php
+Copy code
+<?php
+session_start();
+include "../db/connection.php";
 
-            <div class="flex justify-center mt-4 mb-4">
-                <input type="submit" name="quizSubmit" class="w-2/5 py-2 rounded-md text-white bg-green-500 hover:bg-green-700 font-semibold shadow-md focus:outline-none focus:ring focus:border-blue-green transition duration-300 ease-in-out">
-            </div>
-        </form>
-        <div>
-        </div>
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-        <script>
-            var selectedAnswers = {};
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitWebsiteProblem'])) {
+    // Validate input
+    $component = $_POST['component'];
+    $description = $_POST['description'];
 
-            function handleButtonClick(button, answerId) {
-                var questionId = answerId.split('_')[1];
-                var parentDiv = button.closest('.max-w-3xl'); // Find the closest parent div
+    // Insert the problem report into the database
+    $userId = $_SESSION['user_id'];
+    $insertReportQuery = "INSERT INTO website_problem_reports (user_id, component, description) VALUES ('$userId', '$component', '$description')";
+    $result = mysqli_query($conn, $insertReportQuery);
+    if (!$result) {
+        die("Error: " . mysqli_error($conn));
+    }
+    // Redirect back to the homepage or display a success message
+    // header("Location: index.php");
+    echo "Problem reported successfully!";
+    exit();
+}
+?>
 
-                // Uncheck all radio buttons with the same name within the same div
-                var radioButtons = parentDiv.querySelectorAll('input[name="selectedAnswer[' + questionId + ']"]');
-                radioButtons.forEach(function(radioButton) {
-                    radioButton.checked = false;
-                });
+//вариант 1 ^^^^^
 
-                // Revert the appearance of all buttons in the same div
-                var buttonsInDiv = parentDiv.querySelectorAll('button');
-                buttonsInDiv.forEach(function(btn) {
-                    btn.classList.remove('bg-red-500', 'hover:bg-red-700'); // Remove the custom class and hover effect
-                    btn.classList.add('bg-blue-500', 'hover:bg-blue-700'); // Add the default class and hover effect
-                });
+//вариант 2 
+CREATE TABLE website_problem_reports (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    component VARCHAR(255), -- Indicates the component where the problem occurred (e.g., "quiz", "homepage", etc.)
+    description TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-                // Save the selected answer to the object
-                selectedAnswers[questionId] = answerId;
+<?php
+session_start();
+include "../db/connection.php";
 
-                // Change the color of the clicked button
-                button.classList.remove('bg-blue-500', 'hover:bg-blue-700'); // Remove the default class and hover effect
-                button.classList.add('bg-red-500', 'hover:bg-red-700'); // Add the custom class and hover effect
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-                // Log selected answers in the console
-                console.log(selectedAnswers);
-            }
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitWebsiteProblem'])) {
+    // Validate input
+    $component = $_POST['component'];
+    $description = $_POST['description'];
 
-            // Add an event listener to revert the style when the button loses focus
-            document.addEventListener('click', function(event) {
-                var clickedElement = event.target;
-                var parentDiv = clickedElement.closest('.max-w-3xl'); // Find the closest parent div
-                var allButtons = parentDiv.querySelectorAll('button');
+    // Insert the problem report into the database
+    $userId = $_SESSION['user_id'];
+    $insertReportQuery = "INSERT INTO website_problem_reports (user_id, component, description) VALUES ('$userId', '$component', '$description')";
+    $result = mysqli_query($conn, $insertReportQuery);
+    if (!$result) {
+        die("Error: " . mysqli_error($conn));
+    }
+    // Redirect back to the homepage or display a success message
+    // header("Location: index.php");
+    echo "Problem reported successfully!";
+    exit();
+}
+?>
 
-                allButtons.forEach(function(btn) {
-                    if (btn !== clickedElement && !btn.classList.contains('bg-blue-500')) {
-                        // Revert the appearance of the button when it loses focus within the same div
-                        btn.classList.remove('bg-red-500', 'hover:bg-red-700'); // Remove the custom class and hover effect
-                        btn.classList.add('bg-blue-500', 'hover:bg-blue-700'); // Add the default class and hover effect
-                    }
-                });
-            });
 
-            // Function to validate form submission
-            function validateForm() {
-                for (var key in selectedAnswers) {
-                    if (!selectedAnswers.hasOwnProperty(key)) continue;
-                    if (!selectedAnswers[key]) {
-                        alert("Please select an answer for each question.");
-                        return false;
-                    }
-                }
-                return true;
-            }
-        </script>
+<?php
+session_start();
+include "../db/connection.php";
 
-    </main>
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-    <?php include "../components/footer.php"; ?>
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitWebsiteProblem'])) {
+    // Validate input
+    $component = $_POST['component'];
+    $description = $_POST['description'];
 
-</body>
+    // Insert the problem report into the database
+    $userId = $_SESSION['user_id'];
+    $insertReportQuery = "INSERT INTO website_problem_reports (user_id, component, description) VALUES ('$userId', '$component', '$description')";
+    $result = mysqli_query($conn, $insertReportQuery);
+    if (!$result) {
+        die("Error: " . mysqli_error($conn));
+    }
+    // Redirect back to the homepage or display a success message
+    // header("Location: index.php");
+    echo "Problem reported successfully!";
+    exit();
+}
+?>
 
-</html>
+
+//вариант 2 ^^^^^

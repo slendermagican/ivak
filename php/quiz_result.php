@@ -90,7 +90,7 @@ $questions = mysqli_fetch_all($questionResult, MYSQLI_ASSOC);
             $question = $questions[$i];
             $questionResult = $questionResults[$i];
             echo "<div class='max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md border-2 border-solid " . ($questionResult['is_correct'] == 0 ? 'border-rose-500' : 'border-lime-500') . "' >";
-            echo "<h2 class='text-2xl font-bold'>Question " . htmlspecialchars($question['id']) . "</h2>";
+            echo "<h2 class='text-2xl font-bold'>Question " . htmlspecialchars($i+1) . "</h2>";
             echo "<hr>";
             echo "<h3 class='my-4 text-2xl'>" . htmlspecialchars($question['question_text']) . "</h3>";
             echo "<img src=" . htmlspecialchars($question['img_src']) . " alt=" . htmlspecialchars($question['img_alt']) . " class='w-full object-cover rounded-md mb-2' style='max-height: 70vh;'>";

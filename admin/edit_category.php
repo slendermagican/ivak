@@ -14,6 +14,14 @@ $errorMsg = '';
 $successMsg = '';
 $categoryData = null;
 
+// Fetch all existing categories from the database
+$categoryQuery = "SELECT category FROM categories";
+$categoryResult = mysqli_query($conn, $categoryQuery);
+$categories = array();
+while ($row = mysqli_fetch_assoc($categoryResult)) {
+    $categories[] = $row['category'];
+}
+
 // Process form submission to fetch category details
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["categoryToEdit"])) {
     $categoryToEdit = mysqli_real_escape_string($conn, $_POST["categoryToEdit"]);
@@ -89,9 +97,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateCategory"])) {
                     <p class="text-green-500"><?php echo $successMsg; ?></p>
                 <?php endif; ?>
 
+               
                 <div class="mb-4">
-                    <label for="categoryToEdit" class="block text-gray-700 text-sm font-bold mb-2">Category to Edit:</label>
-                    <input type="text" name="categoryToEdit" value="<?php echo $categoryToEdit; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label for="categoryToEdit" class="block text-gray-700 text-sm font-bold mb-2">Category to Remove:</label>
+                    <select name="categoryToEdit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Select Category</option>
+                        <?php foreach ($categories as $category) : ?>
+                            <option value="<?php echo htmlspecialchars($category); ?>"><?php echo htmlspecialchars($category); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="text-center">
@@ -120,6 +134,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateCategory"])) {
                         <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
                         <textarea name="description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="4" required><?php echo $categoryData['description']; ?></textarea>
                     </div>
+                    <!-- hidden input for which category to be edited-->
+                    <input type="hidden" name="categoryToEdit" value="<?php echo htmlspecialchars($categoryToEdit); ?>">
 
                     <div class="text-center">
                         <button type="submit" name="updateCategory" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update Category</button>
