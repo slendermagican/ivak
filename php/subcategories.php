@@ -37,21 +37,22 @@ if (isset($_GET['category_id'])) {
     include "../components/header.php";
     ?>
 
-    <main class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 flex-grow">
-
-        <?php if (isset($subcategories) && is_array($subcategories) && count($subcategories) > 0) { ?>
-            <?php foreach ($subcategories as $subcategory) { ?>
-                <a href="<?php echo 'quizzes.php?subcategory_id=' . $subcategory['id']; ?>">
-                    <div class="bg-white p-4 rounded-md shadow-md mb-4 transition transform hover:scale-105 hover:bg-gray-100">
-                        <h1 class="text-2xl font-bold mb-2 text-gray-800"><?= htmlspecialchars($subcategory['subcategory']) ?></h1>
-                        <img src="<?= htmlspecialchars($subcategory['img_src']) ?>" alt="<?= htmlspecialchars($subcategory['img_alt']) ?>" class="w-full h-64 object-cover rounded-md mb-2">
-                        <p class="text-gray-700"><?= htmlspecialchars($subcategory['description']) ?></p>
-                    </div>
-                </a>
+    <main class="flex-grow px-4 py-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <?php if (isset($subcategories) && is_array($subcategories) && count($subcategories) > 0) { ?>
+                <?php foreach ($subcategories as $subcategory) { ?>
+                    <a href="<?php echo 'quizzes.php?subcategory_id=' . $subcategory['id']; ?>" class="bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 transform hover:scale-105 hover:shadow-xl">
+                        <div class="p-4">
+                            <h1 class="text-2xl font-semibold text-gray-800 mb-2"><?= htmlspecialchars($subcategory['subcategory']) ?></h1>
+                            <img src="<?= htmlspecialchars($subcategory['img_src']) ?>" alt="<?= htmlspecialchars($subcategory['img_alt']) ?>" class="w-full h-72 object-cover rounded-md mb-2">
+                            <p class="text-gray-700"><?= htmlspecialchars($subcategory['description']) ?></p>
+                        </div>
+                    </a>
+                <?php } ?>
+            <?php } else { ?>
+                <p class="text-red-500 text-center">No subcategories found.</p>
             <?php } ?>
-        <?php } else { ?>
-            <p class="text-red-500">No subcategory data available for the selected category.</p>
-        <?php } ?>
+        </div>
 
     </main>
 

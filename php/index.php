@@ -34,7 +34,7 @@ $quizzes = mysqli_fetch_all($quizzesResult, MYSQLI_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="flex flex-col h-screen bg-gray-100">
+<body class="bg-gray-100 flex flex-col h-screen overflow-x-hidden">
     <?php include "../components/header.php"; ?>
 
     <main class="flex-grow px-4 py-8">
@@ -53,7 +53,7 @@ $quizzes = mysqli_fetch_all($quizzesResult, MYSQLI_ASSOC);
                         <h1 class="text-2xl font-semibold text-gray-800 mb-2"><?= htmlspecialchars($quiz['quiz']) ?></h1>
                         <div class="text-sm text-gray-600 mb-2">Category: <span class="text-blue-600"><?= htmlspecialchars($quiz['category']) ?></span></div>
                         <div class="text-sm text-gray-600 mb-4">Subcategory: <span class="text-green-600"><?= htmlspecialchars($quiz['subcategory']) ?></span></div>
-                        <img src="<?= htmlspecialchars($quiz['img_src']) ?>" alt="<?= htmlspecialchars($quiz['img_alt']) ?>" class="w-full h-48 object-cover rounded-md mb-2">
+                        <img src="<?= htmlspecialchars($quiz['img_src']) ?>" alt="<?= htmlspecialchars($quiz['img_alt']) ?>" class="w-full h-72 object-cover rounded-md mb-2">
                         <p class="text-gray-700"><?= htmlspecialchars($quiz['description']) ?></p>
                     </div>
                 </a>

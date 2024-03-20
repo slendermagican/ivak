@@ -4,7 +4,7 @@ include "../db/connection.php";
 
 // Check if the user is an admin, if not, redirect them to the login page
 if ($_SESSION["isAdmin"] != 1) {
-    echo '<script>window.location.href = "../../ivak/php/index.php";</script>';
+    header("Location: ../../ivak/php/index.php");
     exit();
 }
 

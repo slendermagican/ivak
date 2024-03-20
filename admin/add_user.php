@@ -8,7 +8,7 @@ $successMsg = '';
 
 // Check if the user is an admin, if not, redirect them to the login page
 if ($_SESSION["isAdmin"] != 1) {
-    echo '<script>window.location.href = "../../ivak/php/index.php";</script>';
+    header("Location: ../../ivak/php/index.php");
     exit();
 }
 
@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $username = mysqli_real_escape_string($conn, $_POST["username"]);
     $password = mysqli_real_escape_string($conn, $_POST["password"]);
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hash the password
     $isAdmin = isset($_POST["isAdmin"]) ? 1 : 0;
 
     // Check if the email or username already exists
@@ -42,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_num_rows($checkResult) > 0) {
         $errorMsg = 'User with the same email or username already exists.';
     } else {
-        // Insert new user into the database
-        $insertQuery = "INSERT INTO users (email, username, password, isAdmin) VALUES ('$email', '$username', '$password', $isAdmin)";
+        // Insert new user into the database with hashed password
+        $insertQuery = "INSERT INTO users (email, username, password, isAdmin) VALUES ('$email', '$username', '$hashedPassword', $isAdmin)";
         $insertResult = mysqli_query($conn, $insertQuery);
 
         if ($insertResult) {
