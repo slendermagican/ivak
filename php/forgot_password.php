@@ -27,8 +27,8 @@ if (isset($_POST["reset_request"])) {
             die("Error: " . mysqli_error($conn));
         }
 
-        // Use JavaScript for redirection
-        echo '<script>window.location.href = "reset_password.php?token=' . $token . '";</script>';
+        // Redirect to the reset password page with the token
+        header("Location: reset_password.php?token=$token");
         exit();
     } else {
         $resetFeedback = "No account found with the provided username or email.";
