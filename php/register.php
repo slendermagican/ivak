@@ -2,15 +2,25 @@
 session_start();
 include "../db/connection.php";
 
-// Initialize error variables
-$emailError = $usernameError = "";
+$emailError = $usernameError = $passwordError = ""; // Define Error variables
 
 if (isset($_POST["register"])) {
     $user = mysqli_real_escape_string($conn, $_POST["username"]);
     $pass = mysqli_real_escape_string($conn, $_POST["password"]);
     $email = mysqli_real_escape_string($conn, $_POST["email"]);
 
-    // Check if the username or email already exists
+    // Basic input validation
+    if (empty($user)) {
+        $usernameError = "Username is required.";
+    }
+    if (empty($pass)) {
+        $passwordError = "Password is required.";
+    }
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailError = "Valid email is required.";
+    }
+
+    // Check if username or email already exists
     $checkQuery = "SELECT * FROM users WHERE username='$user' OR email='$email'";
     $result = mysqli_query($conn, $checkQuery);
 
@@ -18,45 +28,35 @@ if (isset($_POST["register"])) {
         die("Error: " . mysqli_error($conn));
     }
 
-    if (mysqli_num_rows($result) > 0) {
-        // Check which field (email or username) is causing the conflict
-        while ($row = mysqli_fetch_assoc($result)) {
-            if ($row['username'] === $user) {
-                $usernameError = "Username already exists. Please choose a different one.";
-            }
-            if ($row['email'] === $email) {
-                $emailError = "Email already exists. Please use a different one.";
-            }
+    while ($row = mysqli_fetch_assoc($result)) {
+        if ($row['username'] === $user) {
+            $usernameError = "Username already exists. Please choose a different one.";
         }
-    } else {
-        // Uncomment the following lines for password hashing
-        // $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
-        
-        // Username and email are unique, proceed with the registration
-        $insertQuery = "INSERT INTO users (username, password, email) VALUES ('$user', '$pass', '$email')";
+        if ($row['email'] === $email) {
+            $emailError = "Email already exists. Please use a different one.";
+        }
+    }
+
+    // If no errors, proceed with registration
+    if (empty($emailError) && empty($usernameError) && empty($passwordError)) {
+        // Hash the password
+        $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
+
+        $insertQuery = "INSERT INTO users (username, password, email) VALUES ('$user', '$hashedPassword', '$email')";
         $result = mysqli_query($conn, $insertQuery);
 
         if (!$result) {
             die("Error: " . mysqli_error($conn));
         }
 
-        // Retrieve the last inserted ID
-        $userId = mysqli_insert_id($conn);
-        
-        // Save user data in session variables(except the password because it's a sensitive data)
-        $_SESSION["userId"] = $userId;
-        $_SESSION["username"] = $user;
-        $_SESSION["email"] = $email;
+        $_SESSION["user_id"] = $userId;
         $_SESSION["isAdmin"] = 0;
 
         echo "Registration successful!";
-
-        // Redirect to index.php
-        echo '<script>window.location.href = "index.php";</script>';
+        header("Location: index.php");
         exit();
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -72,11 +72,11 @@ if (isset($_POST["register"])) {
 </head>
 
 <body class="bg-gray-100 flex flex-col h-screen">
-    <?php
-    include "../components/header.php";
-    ?>
+    <?php include "../components/header.php"; ?>
 
     <main class="container mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md flex-1">
+        <h1 class="text-3xl font-bold mb-4">Registration</h1>
+        <p class="text-gray-600 mb-8">Create an account to access our services.</p>
         <form action="register.php" method="post">
             <div class="mb-4">
                 <label for="email" class="block text-gray-700 font-bold mb-2">Email:</label>
@@ -91,22 +91,20 @@ if (isset($_POST["register"])) {
             <div class="mb-4">
                 <label for="password" class="block text-gray-700 font-bold mb-2">Password:</label>
                 <input type="password" id="password" name="password" class="w-full p-2 border rounded">
+                <p class="text-red-500"><?php echo $passwordError; ?></p>
+            </div>
+            <div class="flex justify-between items-center">
+            <div>
+                <a href="login.php" class="text-blue-500">Already have an account?</a>
             </div>
             <div>
-                <input type="submit" name="register" value="Register" class="bg-green-500 text-white p-2 rounded">
+                <input type="submit" name="register" value="Register" class="bg-green-500 text-white p-2 w-24 rounded">
             </div>
-            
-            <!-- Message for existing users -->
-            <div class="mt-4">
-                <p>Already have an account? <a href="login.php" class="text-blue-500">Login here</a>.</p>
-            </div>
+        </div>
         </form>
     </main>
 
-    <?php
-    include "../components/footer.php";
-    ?>
+    <?php include "../components/footer.php"; ?>
 </body>
 
 </html>
-

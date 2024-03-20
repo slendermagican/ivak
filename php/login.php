@@ -2,58 +2,61 @@
 session_start();
 include "../db/connection.php";
 
-$loginFeedback = ""; // Variable to store login feedback
+$loginFeedback = "";
 
 if (isset($_POST["login"])) {
-    $loginIdentifier = mysqli_real_escape_string($conn, $_POST["identifier"]); // Either username or email
-    $pass = mysqli_real_escape_string($conn, $_POST["password"]);
+    $loginIdentifier = $_POST["identifier"];
+    $password = $_POST["password"];
 
-    // Check if the provided identifier (username or email) and password match
-    $loginQuery = "SELECT * FROM users WHERE (username='$loginIdentifier' OR email='$loginIdentifier') AND password='$pass'";
-    $result = mysqli_query($conn, $loginQuery);
+    // Prepare statement to prevent SQL injection
+    $loginQuery = "SELECT * FROM users WHERE username=? OR email=?";
+    $stmt = mysqli_prepare($conn, $loginQuery);
+    mysqli_stmt_bind_param($stmt, "ss", $loginIdentifier, $loginIdentifier);
+    mysqli_stmt_execute($stmt);
+
+    // Get result
+    $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) > 0) {
-        // Identifier (username or email) and password are correct, proceed with login
         $userData = mysqli_fetch_assoc($result);
 
-        //not saving the passoword in the session because it's a sensitive data
-        $_SESSION["isAdmin"] = $userData["isAdmin"];
-        $_SESSION["username"] = $userData["username"];
-        $_SESSION["user_id"] = $userData["id"];
-        $_SESSION["email"] = $userData["email"];
-        // $_SESSION["password"] = $pass;
+        // Verify hashed password
+        if (password_verify($password, $userData["password"])) {
+            // Password is correct, set session variables
+            $_SESSION["isAdmin"] = $userData["isAdmin"];
+            $_SESSION["user_id"] = $userData["id"];
 
-        // Close the session write operation
-        session_write_close();
+            session_write_close();
 
-        // Use JavaScript for redirection
-        echo '<script>window.location.href = "index.php";</script>';
-        exit();
+            // Redirect to index.php after successful login
+            header("Location: index.php");
+            exit();
+        } else {
+            // Password is incorrect
+            $loginFeedback = "Invalid password. Please try again.";
+        }
     } else {
-        // Identifier (username or email) or password is incorrect, set feedback message
-        $loginFeedback = "Invalid username/email or password. Please try again.";
+        // Username or email not found
+        $loginFeedback = "Invalid username/email. Please try again.";
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/styles/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-100 flex flex-col h-screen">
-    <?php
-    include "../components/header.php";
-    ?>
+    <?php include "../components/header.php"; ?>
 
-    <main class="container flex-grow mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md">
+    <main class="container mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md flex-1">
+    <h1 class="text-3xl font-bold mb-4">Login</h1>
+    <p class="text-gray-600 mb-8">Login to access your account.</p>
         <!-- Display login feedback here -->
         <?php if (!empty($loginFeedback)) : ?>
             <div class="mb-4 text-red-500">
@@ -70,12 +73,12 @@ if (isset($_POST["login"])) {
                 <label for="password" class="block text-gray-700 font-bold mb-2">Password:</label>
                 <input type="password" id="password" name="password" class="w-full p-2 border rounded">
             </div>
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <input type="submit" name="login" value="Login" class="bg-blue-500 text-white p-2 rounded">
-                </div>
+            <div class="flex justify-between items-center mb-4">
                 <div>
                     <a href="forgot_password.php" class="text-blue-500">Forgotten Password?</a>
+                </div>
+                <div>
+                    <input type="submit" name="login" value="Login" class="bg-blue-500 text-white p-2 w-24 rounded">
                 </div>
             </div>
         </form>
@@ -85,9 +88,6 @@ if (isset($_POST["login"])) {
         </div>
     </main>
 
-    <?php
-    include "../components/footer.php";
-    ?>
+    <?php include "../components/footer.php"; ?>
 </body>
-
 </html>

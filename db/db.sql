@@ -9,7 +9,7 @@ USE quizzicledb;
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(320) UNIQUE,
-    username VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     isAdmin BOOLEAN DEFAULT FALSE,
     reset_token VARCHAR(255) DEFAULT NULL
@@ -18,20 +18,20 @@ CREATE TABLE users (
 -- Create the categories table
 CREATE TABLE categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    category VARCHAR(255) UNIQUE,
+    category VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE,
     img_src TEXT NOT NULL,
-    img_alt VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL
+    img_alt VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 );
 
 
 -- Create the subcategories table
 CREATE TABLE subcategories (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    subcategory VARCHAR(255) UNIQUE,
+    subcategory VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE,
     img_src TEXT NOT NULL,
-    img_alt VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
+    img_alt VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
@@ -39,10 +39,10 @@ CREATE TABLE subcategories (
 -- Create the quiz table
 CREATE TABLE quizzes (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    quiz VARCHAR(255) UNIQUE,
+    quiz VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci UNIQUE,
     img_src TEXT NOT NULL,
-    img_alt VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
+    img_alt VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     subcategory_id INT,
     FOREIGN KEY (subcategory_id) REFERENCES subcategories(id) ON DELETE CASCADE
 );
@@ -51,13 +51,13 @@ CREATE TABLE quizzes (
 -- Create the questions table
 CREATE TABLE questions (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    question_text TEXT NOT NULL,
+    question_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     img_src TEXT NOT NULL,
-    img_alt VARCHAR(255) NOT NULL,
-    answer1 VARCHAR(255) NOT NULL,
-    answer2 VARCHAR(255) NOT NULL,
-    answer3 VARCHAR(255) NOT NULL,
-    answer4 VARCHAR(255) NOT NULL,
+    img_alt VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    answer1 VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    answer2 VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    answer3 VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    answer4 VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     correct_answer_index INT NOT NULL CHECK (correct_answer_index BETWEEN 1 AND 4),
     quiz_id INT,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
@@ -88,14 +88,24 @@ CREATE TABLE question_results (
     is_correct BOOLEAN
 );
 
+-- Create feedback table
+CREATE TABLE feedback (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    feedback_type ENUM('problem', 'request') NOT NULL DEFAULT 'problem',
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 
 -- Insert data into the users table
 INSERT INTO users (email, username, password, isAdmin)
 VALUES
-    ('slendermagican@gmail.com', 'ivak', '1234', TRUE),
-    ('user1@example.com', 'user1', 'password123', FALSE),
-    ('user2@example.com', 'user2', 'securepass', FALSE),
-    ('user3@example.com', 'user3', 'secretword', FALSE);
+    ('slendermagican@gmail.com', 'ivak', '$2y$10$CdA1h9jaMysmu8oqvfNr.e44mvw4xr2/cwIeqPfMkkKEj03EA5MpK', TRUE);
+    
 
 -- Insert data into the categories table
 INSERT INTO categories (category, img_src, img_alt, description)

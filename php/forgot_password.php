@@ -35,10 +35,8 @@ if (isset($_POST["reset_request"])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,13 +45,13 @@ if (isset($_POST["reset_request"])) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
 </head>
-
 <body class="bg-gray-100 flex flex-col h-screen">
-    <?php
-    include "../components/header.php";
-    ?>
+    <?php include "../components/header.php"; ?>
 
     <main class="container flex-grow mx-auto my-8 p-8 bg-white rounded shadow-md max-w-md">
+        <h1 class="text-3xl font-bold mb-4">Forgot Password</h1>
+        <p class="text-gray-600 mb-8">Please enter your username or email to reset your password.</p>
+        
         <!-- Display reset feedback here -->
         <?php if (!empty($resetFeedback)) : ?>
             <div class="mb-4 text-red-500">
@@ -76,9 +74,6 @@ if (isset($_POST["reset_request"])) {
         </div>
     </main>
 
-    <?php
-    include "../components/footer.php";
-    ?>
+    <?php include "../components/footer.php"; ?>
 </body>
-
 </html>
