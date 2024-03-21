@@ -26,7 +26,7 @@ $categories = mysqli_fetch_all($categoryResult, MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category table</title>
+    <title>Admin Dashboard - Category Table</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Libraries for the sortability of the table-->
@@ -42,8 +42,7 @@ $categories = mysqli_fetch_all($categoryResult, MYSQLI_ASSOC);
 
     <main class="flex-grow p-4 flex flex-row gap-3">
         <!-- Aside (Navigation on the left) -->
-        <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden">
-            <!-- Your navigation content goes here -->
+        <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 

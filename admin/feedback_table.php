@@ -8,16 +8,18 @@ if ($_SESSION["isAdmin"] != 1) {
     exit();
 }
 
-// Fetch all user data from the database
-$userQuery = "SELECT * FROM users";
-$userResult = mysqli_query($conn, $userQuery);
+// Fetch all feedback data from the database along with usernames
+$feedbackQuery = "SELECT feedback.id, users.username, feedback.description, feedback.feedback_type, feedback.timestamp 
+                  FROM feedback 
+                  INNER JOIN users ON feedback.user_id = users.id";
+$feedbackResult = mysqli_query($conn, $feedbackQuery);
 
-if (!$userResult) {
+if (!$feedbackResult) {
     die("Error: " . mysqli_error($conn));
 }
 
-// Fetch all user data into an associative array
-$users = mysqli_fetch_all($userResult, MYSQLI_ASSOC);
+// Fetch all feedback data into an associative array
+$feedbacks = mysqli_fetch_all($feedbackResult, MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +28,10 @@ $users = mysqli_fetch_all($userResult, MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Users Table</title>
+    <title>Admin Dashboard - Feedback Table</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Libraries for the sortability of the table-->
+
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
@@ -48,40 +50,38 @@ $users = mysqli_fetch_all($userResult, MYSQLI_ASSOC);
 
         <!-- Section (Content on the right) -->
         <section class="flex-grow p-4 w-3/4 flex-1 bg-gray-200 rounded-2xl overflow-x-hidden">
-            <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Users Table</h1>
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Feedback Table</h1>
             <div class="overflow-x-auto">
-                <?php if (isset($users) && is_array($users) && count($users) > 0) : ?>
-                    <table id="usersTable" class="min-w-full table-auto border border-gray-300 bg-white shadow-md rounded-md overflow-hidden">
+                <?php if (isset($feedbacks) && is_array($feedbacks) && count($feedbacks) > 0) : ?>
+                    <table id="feedbackTable" class="min-w-full table-auto border border-gray-300 bg-white shadow-md rounded-md overflow-hidden">
                         <thead>
                             <tr class="bg-gray-100">
+                                <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">ID</th>
                                 <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Username</th>
-                                <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Password</th>
-                                <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Email</th>
-                                <th class="p-3 font-bold uppercase text-gray-600 text-center">Admin</th>
+                                <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Description</th>
+                                <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Feedback Type</th>
+                                <th class="p-3 font-bold uppercase text-gray-600 text-center">Timestamp</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($users as $user) : ?>
+                            <?php foreach ($feedbacks as $feedback) : ?>
                                 <tr class="border-b hover:bg-gray-100 transition duration-300">
-                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $user['username']; ?></td>
-                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $user['password']; ?></td>
-                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $user['email']; ?></td>
-                                    <td class="p-3 text-gray-800 text-center">
-                                        <span class="inline-block px-2 py-1 rounded-full text-white <?php echo ($user['isAdmin'] == 1) ? 'bg-green-500' : 'bg-red-500'; ?>">
-                                            <?php echo ($user['isAdmin'] == 1) ? 'Yes' : 'No'; ?>
-                                        </span>
-                                    </td>
+                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $feedback['id']; ?></td>
+                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $feedback['username']; ?></td>
+                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $feedback['description']; ?></td>
+                                    <td class="p-3 text-gray-800 border-r text-center"><?php echo $feedback['feedback_type']; ?></td>
+                                    <td class="p-3 text-gray-800 text-center"><?php echo $feedback['timestamp']; ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 <?php else : ?>
-                    <p class="text-red-500">No user data available.</p>
+                    <p class="text-red-500">No feedback data available.</p>
                 <?php endif; ?>
             </div>
             <script>
-                $(document).ready(function() {
-                    $('#usersTable').DataTable();
+                $(document).ready(function () {
+                    $('#feedbackTable').DataTable();
                 });
             </script>
         </section>

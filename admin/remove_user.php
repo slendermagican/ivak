@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["emailToRemove"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Edit User</title>
+    <title>Admin Dashboard - Remove User</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
@@ -60,8 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["emailToRemove"])) {
 
     <main class="flex-grow p-4 flex flex-row gap-3">
         <!-- Aside (Navigation on the left) -->
-        <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden">
-            <!-- Your navigation content goes here -->
+        <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 

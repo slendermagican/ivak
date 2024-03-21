@@ -29,7 +29,7 @@ $subcategories = mysqli_fetch_all($subCategoryResult, MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subcategory Table</title>
+    <title>Admin Dashboard - Subcategory Table</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Libraries for the sortability of the table-->
@@ -45,13 +45,11 @@ $subcategories = mysqli_fetch_all($subCategoryResult, MYSQLI_ASSOC);
 
     <main class="flex-grow p-4 flex flex-row gap-3">
         <!-- Aside (Navigation on the left) -->
-        <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden">
-            <!-- Your navigation content goes here -->
+        <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 
-        <!-- Section (Content on the right) -->
-        <section class="flex-grow p-4 w-3/4 bg-white rounded-2xl overflow-x-auto shadow-md">
+        <section class="flex-grow p-4 w-3/4 bg-gray-200 rounded-2xl overflow-x-auto shadow-md">
             <h1 class="text-3xl font-bold mb-4 text-gray-800 text-center">Subcategories Table</h1>
             <div class="overflow-x-auto">
                 <?php if (isset($subcategories) && is_array($subcategories) && count($subcategories) > 0) : ?>

@@ -29,31 +29,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["emailToEdit"])) {
     $userData = mysqli_fetch_assoc($userResult);
 }
 
+
 // Process form submission to update user details
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateUser"])) {
     // Validate and sanitize form data
-    $emailToEdit= filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+    $emailToEdit = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $newEmail = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $newUsername = mysqli_real_escape_string($conn, $_POST["username"]);
-    $newPassword = $_POST["password"];
+    $newPassword = $_POST["password"]; // Retrieve new password from form
+
+    // Hash the new password
+    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
     $isAdmin = isset($_POST["isAdmin"]) ? 1 : 0;
 
-    
-    // Update user details in the database
-    $updateQuery = "UPDATE users SET email = '$newEmail', username = '$newUsername', password = '$newPassword', isAdmin = $isAdmin WHERE email = '$emailToEdit'";
+    // Update user details in the database with hashed password
+    $updateQuery = "UPDATE users SET email = '$newEmail', username = '$newUsername', password = '$hashedPassword', isAdmin = $isAdmin WHERE email = '$emailToEdit'";
     $updateResult = mysqli_query($conn, $updateQuery);
-
 
     if ($updateResult) {
         $successMsg = 'User details updated successfully.';
         $userData['email'] = $newEmail;
         $userData['username'] = $newUsername;
-        $userData['password'] = $newPassword;
         $userData['isAdmin'] = $isAdmin;
     } else {
         $errorMsg = 'Error updating user details: ' . mysqli_error($conn);
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -73,8 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateUser"])) {
 
     <main class="flex-grow p-4 flex flex-row gap-3">
         <!-- Aside (Navigation on the left) -->
-        <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden">
-            <!-- Your navigation content goes here -->
+        <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 

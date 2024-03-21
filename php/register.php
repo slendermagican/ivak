@@ -94,13 +94,13 @@ if (isset($_POST["register"])) {
                 <p class="text-red-500"><?php echo $passwordError; ?></p>
             </div>
             <div class="flex justify-between items-center">
-            <div>
-                <a href="login.php" class="text-blue-500">Already have an account?</a>
+                <div>
+                    <a href="login.php" class="text-blue-500">Already have an account?</a>
+                </div>
+                <div>
+                    <input type="submit" name="register" value="Register" class="bg-blue-500 text-white p-2 w-24 rounded">
+                </div>
             </div>
-            <div>
-                <input type="submit" name="register" value="Register" class="bg-green-500 text-white p-2 w-24 rounded">
-            </div>
-        </div>
         </form>
     </main>
 

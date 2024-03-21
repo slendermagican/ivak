@@ -78,9 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateSubcategory"])) 
     <?php include "../components/header.php"; ?>
 
     <main class="flex-grow p-4 flex flex-row gap-3">
-        <!-- Aside (Navigation on the left) -->
-        <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden">
-            <!-- Your navigation content goes here -->
+       <!-- Aside (Navigation on the left) -->
+       <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 

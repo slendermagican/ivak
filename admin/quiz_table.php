@@ -32,7 +32,7 @@ $quizzes = mysqli_fetch_all($quizResult, MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizzes Table</title>
+    <title>Admin Dashboard - Quizzes Table</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Libraries for the sortability of the table-->
@@ -48,13 +48,12 @@ $quizzes = mysqli_fetch_all($quizResult, MYSQLI_ASSOC);
 
     <main class="flex-grow p-4 flex flex-row gap-3">
         <!-- Aside (Navigation on the left) -->
-        <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden">
-            <!-- Your navigation content goes here -->
+        <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 
         <!-- Section (Content on the right) -->
-        <section class="flex-grow p-4 w-3/4 bg-white rounded-2xl overflow-x-auto shadow-md">
+        <section class="flex-grow p-4 w-3/4 bg-gray-200 rounded-2xl overflow-x-auto shadow-md">
             <h1 class="text-3xl font-bold mb-4 text-gray-800 text-center">Quizzes Table</h1>
             <div class="overflow-x-auto">
                 <?php if (isset($quizzes) && is_array($quizzes) && count($quizzes) > 0) : ?>
@@ -68,7 +67,6 @@ $quizzes = mysqli_fetch_all($quizResult, MYSQLI_ASSOC);
                                 <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Subcategory</th>
                                 <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Category</th>
                                 <th class="p-3 font-bold uppercase text-gray-600 border-r text-center">Num. of Questions</th>
-                                <th class="p-3 font-bold uppercase text-gray-600 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,11 +81,6 @@ $quizzes = mysqli_fetch_all($quizResult, MYSQLI_ASSOC);
                                     <td class="p-3 text-gray-800 border-r text-center"><?php echo $quiz['subcategory_name']; ?></td>
                                     <td class="p-3 text-gray-800 border-r text-center"><?php echo $quiz['category_name']; ?></td>
                                     <td class="p-3 text-gray-800 border-r text-center"><?php echo $quiz['num_questions']; ?></td>
-                                    <td class="p-3 text-gray-800 text-center">
-                                        <!-- Add edit and delete buttons or links here -->
-                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</button>
-                                        <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

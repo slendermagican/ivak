@@ -25,18 +25,17 @@ if ($_SESSION["isAdmin"] != 1) {
     <?php include "../components/header.php"; ?>
 
     <main class="flex-grow p-4 flex flex-row gap-3">
-    <!-- Aside (Navigation on the left) -->
-    <aside class="bg-gray-200 p-4 w-1/4 rounded-2xl shadow-md overflow-hidden"> <!-- Adjusted class here -->
-        <!-- Your navigation content goes here -->
-        <?php include "../components/admin_nav.php"; ?>
-    </aside>
+        <!-- Aside (Navigation on the left) -->
+        <aside class="w-1/4">
+            <?php include "../components/admin_nav.php"; ?>
+        </aside>
 
-    <!--Section (Content on the right)-->
-    <section class="flex-grow p-4 w-3/4 flex-1 bg-gray-200 rounded-2xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Admin Dashboard</h1>
-        
-    </section>
-</main>
+        <!--Section (Content on the right)-->
+        <section class="flex-grow p-4 w-3/4 flex-1 bg-gray-200 rounded-2xl">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Admin Dashboard</h1>
+
+        </section>
+    </main>
 
     <?php include "../components/footer.php"; ?>
 

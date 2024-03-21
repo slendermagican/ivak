@@ -11,15 +11,18 @@
             </div>
         </div>
         <nav id="menu" class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-            <a href="/ivak/php/about.php" class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
+            <a href="/ivak/php/about.php" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
                 <i class="fas fa-info-circle mr-2"></i> About
             </a>
-            <a href="/ivak/php/categories.php" class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
+            <a href="/ivak/php/categories.php" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
                 <i class="fas fa-list-alt mr-2"></i> Categories
             </a>
-            <a href="/ivak/php/leaderboard.php" class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
+            <a href="/ivak/php/leaderboard.php" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
                 <i class="fas fa-trophy mr-2"></i> Leaderboard
             </a>
+            <a href="../php/feedback.php"  class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
+                    <i class="fa fa-comments-o mr-2"></i> Feedback
+                </a>
             <?php if (!empty($_SESSION)) : ?>
                 <?php if ($_SESSION["isAdmin"]) : ?>
                     <a href="../admin/index.php" class="w-full md:w-auto bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
@@ -30,7 +33,7 @@
                     <i class="fas fa-sign-out-alt mr-2"></i> Logout
                 </a>
             <?php else : ?>
-                <a href="login.php" id="login" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
+                <a href="login.php" id="login" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
                     <i class="fas fa-sign-in-alt mr-2"></i> Login
                 </a>
                 <a href="register.php" id="register" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block hover:text-gray-300">
