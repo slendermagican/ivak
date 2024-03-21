@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 flex flex-col h-screen">
@@ -151,91 +151,91 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     <div class="fixed top-10 right-10 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg" id="timer">00:00:00</div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listener to the parent element of radio buttons
-        document.getElementById('quizForm').addEventListener('change', function(event) {
-            const target = event.target;
-            if (target.type === 'radio') {
-                updateRadioStyle(target);
-            }
-        });
-
-        // Function to update radio button style
-        function updateRadioStyle(radioButton) {
-            const siblings = Array.from(radioButton.parentElement.children);
-            siblings.forEach(sibling => {
-                sibling.classList.remove('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
-                sibling.classList.add('bg-blue-500', 'focus:bg-blue-300', 'hover:bg-blue-700');
-            });
-            radioButton.nextElementSibling.classList.remove('bg-blue-500', 'focus:bg-blue-300', 'hover:bg-blue-700');
-            radioButton.nextElementSibling.classList.add('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
-        }
-
-        // Timer functionality
-        const timerElement = document.getElementById('timer');
-        const startTime = <?php echo time(); ?>;
-
-        function updateTimer() {
-            const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-            const elapsedTime = currentTime - startTime;
-            const hours = Math.floor(elapsedTime / 3600);
-            const minutes = Math.floor((elapsedTime % 3600) / 60);
-            const seconds = elapsedTime % 60;
-            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            timerElement.textContent = formattedTime;
-        }
-
-        setInterval(updateTimer, 1000);
-    });
-
-    function validateForm() {
-        let allAnswered = true; // Assume all questions are answered
-        let alerted = false; // Flag to track if alert has been shown
-        let scrollToFirstUnanswered = true; // Flag to determine if scrolling is needed
-
-        // Iterate through each question
-        const questions = document.querySelectorAll('.max-w-3xl');
-        questions.forEach(question => {
-            const radios = question.querySelectorAll('[type=radio]');
-            let answered = false; // Assume no radio button is clicked for the current question
-
-            // Check if any radio button is clicked for the current question
-            radios.forEach(radio => {
-                if (radio.checked) {
-                    answered = true; // At least one radio button is clicked for the current question
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener to the parent element of radio buttons
+            document.getElementById('quizForm').addEventListener('change', function(event) {
+                const target = event.target;
+                if (target.type === 'radio') {
+                    updateRadioStyle(target);
                 }
             });
 
-            // If no radio button is clicked for the current question
-            if (!answered) {
-                allAnswered = false; // At least one question is unanswered
-
-                // Scroll to the height of the first unanswered question relative to the viewport
-                if (scrollToFirstUnanswered) {
-                    const rect = question.getBoundingClientRect();
-                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const offsetTop = rect.top + scrollTop;
-
-                    // Scroll to the first unanswered question
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-
-                    scrollToFirstUnanswered = false; // Set to false to prevent further scrolling
-                }
-
-                // Alert user to answer all questions (only once)
-                if (!alerted) {
-                    alert("Please answer all questions before submitting.");
-                    alerted = true; // Set the flag to true after the first alert
-                }
+            // Function to update radio button style
+            function updateRadioStyle(radioButton) {
+                const siblings = Array.from(radioButton.parentElement.children);
+                siblings.forEach(sibling => {
+                    sibling.classList.remove('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
+                    sibling.classList.add('bg-blue-500', 'focus:bg-blue-300', 'hover:bg-blue-700');
+                });
+                radioButton.nextElementSibling.classList.remove('bg-blue-500', 'focus:bg-blue-300', 'hover:bg-blue-700');
+                radioButton.nextElementSibling.classList.add('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
             }
+
+            // Timer functionality
+            const timerElement = document.getElementById('timer');
+            const startTime = <?php echo time(); ?>;
+
+            function updateTimer() {
+                const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+                const elapsedTime = currentTime - startTime;
+                const hours = Math.floor(elapsedTime / 3600);
+                const minutes = Math.floor((elapsedTime % 3600) / 60);
+                const seconds = elapsedTime % 60;
+                const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                timerElement.textContent = formattedTime;
+            }
+
+            setInterval(updateTimer, 1000);
         });
-        // Prevent form submission if any question is unanswered
-        return allAnswered;
-    }
-</script>
+
+        function validateForm() {
+            let allAnswered = true; // Assume all questions are answered
+            let alerted = false; // Flag to track if alert has been shown
+            let scrollToFirstUnanswered = true; // Flag to determine if scrolling is needed
+
+            // Iterate through each question
+            const questions = document.querySelectorAll('.max-w-3xl');
+            questions.forEach(question => {
+                const radios = question.querySelectorAll('[type=radio]');
+                let answered = false; // Assume no radio button is clicked for the current question
+
+                // Check if any radio button is clicked for the current question
+                radios.forEach(radio => {
+                    if (radio.checked) {
+                        answered = true; // At least one radio button is clicked for the current question
+                    }
+                });
+
+                // If no radio button is clicked for the current question
+                if (!answered) {
+                    allAnswered = false; // At least one question is unanswered
+
+                    // Scroll to the height of the first unanswered question relative to the viewport
+                    if (scrollToFirstUnanswered) {
+                        const rect = question.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        const offsetTop = rect.top + scrollTop;
+
+                        // Scroll to the first unanswered question
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+
+                        scrollToFirstUnanswered = false; // Set to false to prevent further scrolling
+                    }
+
+                    // Alert user to answer all questions (only once)
+                    if (!alerted) {
+                        alert("Please answer all questions before submitting.");
+                        alerted = true; // Set the flag to true after the first alert
+                    }
+                }
+            });
+            // Prevent form submission if any question is unanswered
+            return allAnswered;
+        }
+    </script>
 
 
     <?php include "../components/footer.php"; ?>

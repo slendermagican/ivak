@@ -23,7 +23,7 @@ $result = mysqli_query($conn, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
 
     <!-- Libraries for the sortability of the table-->
@@ -32,7 +32,7 @@ $result = mysqli_query($conn, $query);
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#leaderboard').DataTable(); // Initialize DataTable
         });
     </script>

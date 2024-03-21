@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Add User</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 flex flex-col h-screen">
@@ -82,11 +82,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Add User</h1>
 
             <form method="POST" class="max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <?php if (!empty($errorMsg)): ?>
+                <?php if (!empty($errorMsg)) : ?>
                     <p class="text-red-500"><?php echo $errorMsg; ?></p>
                 <?php endif; ?>
 
-                <?php if (!empty($successMsg)): ?>
+                <?php if (!empty($successMsg)) : ?>
                     <p class="text-green-500"><?php echo $successMsg; ?></p>
                 <?php endif; ?>
 

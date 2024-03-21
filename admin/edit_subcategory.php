@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateSubcategory"])) 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Edit Subcategory</title>
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 flex flex-col h-screen">
@@ -78,8 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateSubcategory"])) 
     <?php include "../components/header.php"; ?>
 
     <main class="flex-grow p-4 flex flex-row gap-3">
-       <!-- Aside (Navigation on the left) -->
-       <aside class="w-1/4">
+        <!-- Aside (Navigation on the left) -->
+        <aside class="w-1/4">
             <?php include "../components/admin_nav.php"; ?>
         </aside>
 
@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateSubcategory"])) 
                     <p class="text-green-500"><?php echo $successMsg; ?></p>
                 <?php endif; ?>
 
-               
+
                 <div class="mb-4">
                     <label for="subategoryToEdit" class="block text-gray-700 text-sm font-bold mb-2">Subcategory to Edit:</label>
                     <select name="subcategoryToEdit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
