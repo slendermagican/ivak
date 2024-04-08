@@ -1,17 +1,23 @@
 <?php
 session_start();
-include "../db/connection.php"; // Assuming this file contains the database connection
+include "../db/connection.php";
 
-// Fetch leaderboard data from the database
-$query = "SELECT users.username, quiz_results.score, quiz_results.time_to_complete, quizzes.quiz, subcategories.subcategory, categories.category, 
-          quizzes.img_src AS quiz_img, subcategories.img_src AS subcategory_img, categories.img_src AS category_img
-          FROM quiz_results
-          INNER JOIN users ON quiz_results.user_id = users.id
-          INNER JOIN quizzes ON quiz_results.quiz_id = quizzes.id
-          INNER JOIN subcategories ON quizzes.subcategory_id = subcategories.id
-          INNER JOIN categories ON subcategories.category_id = categories.id
-          ORDER BY quiz_results.score DESC, quiz_results.time_to_complete ASC";
-$result = mysqli_query($conn, $query);
+// SQL query to retrieve the best result of each user for each quiz(best result= highest score after that lowest time_to_comlete)
+$sql = "
+SELECT qr.*, u.username, q.quiz, q.img_src AS quiz_img, sc.subcategory, sc.img_src AS subcategory_img, c.category, c.img_src AS category_img
+FROM (
+    SELECT qr1.*
+    FROM quiz_results qr1
+    LEFT JOIN quiz_results qr2 ON qr1.user_id = qr2.user_id AND qr1.quiz_id = qr2.quiz_id AND ((qr1.score < qr2.score) OR (qr1.score = qr2.score AND qr1.time_to_complete > qr2.time_to_complete) OR (qr1.score = qr2.score AND qr1.time_to_complete = qr2.time_to_complete AND qr1.timestamp > qr2.timestamp))
+    WHERE qr2.user_id IS NULL
+) qr
+INNER JOIN users u ON qr.user_id = u.id
+INNER JOIN quizzes q ON qr.quiz_id = q.id
+INNER JOIN subcategories sc ON q.subcategory_id = sc.id
+INNER JOIN categories c ON sc.category_id = c.id
+ORDER BY u.username, q.quiz, qr.score DESC, qr.time_to_complete ASC, qr.timestamp ASC
+";
+$result = mysqli_query($conn, $sql);
 
 ?>
 
@@ -39,11 +45,7 @@ $result = mysqli_query($conn, $query);
 </head>
 
 <body class="bg-gray-100 flex flex-col h-screen">
-
-    <?php
-    include "../components/header.php";
-    ?>
-
+    <?php include "../components/header.php"; ?>
     <main class="flex-grow">
         <div class="container mx-auto mt-8">
             <table id="leaderboard" class="stripe hover" style="width:100%">
@@ -58,27 +60,21 @@ $result = mysqli_query($conn, $query);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    // Output leaderboard data
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<tr>";
-                        echo "<td class='border px-4 py-2'>{$row['username']}</td>";
-                        echo "<td class='border px-4 py-2'><img src='{$row['category_img']}' alt='Category Icon' class='w-16 h-9 mr-2 inline-block align-middle'>{$row['category']}</td>";
-                        echo "<td class='border px-4 py-2'><img src='{$row['subcategory_img']}' alt='Subcategory Icon' class='w-16 h-9 mr-2 inline-block align-middle'>{$row['subcategory']}</td>";
-                        echo "<td class='border px-4 py-2'><img src='{$row['quiz_img']}' alt='Quiz Icon' class='w-16 h-9 mr-2 inline-block align-middle'>{$row['quiz']}</td>";
-                        echo "<td class='border px-4 py-2'>{$row['score']}</td>";
-                        echo "<td class='border px-4 py-2'>{$row['time_to_complete']}</td>";
-                        echo "</tr>";
-                    }
-                    ?>
+                    <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                        <tr>
+                            <td class='border px-4 py-2'><?= $row['username'] ?></td>
+                            <td class='border px-4 py-2'><img src='<?= $row['category_img'] ?>' alt='Category Icon' class='w-16 h-9 mr-2 inline-block align-middle'><?= $row['category'] ?></td>
+                            <td class='border px-4 py-2'><img src='<?= $row['subcategory_img'] ?>' alt='Subcategory Icon' class='w-16 h-9 mr-2 inline-block align-middle'><?= $row['subcategory'] ?></td>
+                            <td class='border px-4 py-2'><img src='<?= $row['quiz_img'] ?>' alt='Quiz Icon' class='w-16 h-9 mr-2 inline-block align-middle'><?= $row['quiz'] ?></td>
+                            <td class='border px-4 py-2'><?= $row['score'] ?></td>
+                            <td class='border px-4 py-2'><?= $row['time_to_complete'] ?></td>
+                        </tr>
+                    <?php endwhile; ?>
                 </tbody>
             </table>
         </div>
     </main>
-
-    <?php
-    include "../components/footer.php";
-    ?>
+    <?php include "../components/footer.php"; ?>
 </body>
 
 </html>

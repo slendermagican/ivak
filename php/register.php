@@ -48,7 +48,8 @@ if (isset($_POST["register"])) {
         if (!$result) {
             die("Error: " . mysqli_error($conn));
         }
-
+        // Get the last inserted ID
+        $userId = mysqli_insert_id($conn);
         $_SESSION["user_id"] = $userId;
         $_SESSION["isAdmin"] = 0;
 

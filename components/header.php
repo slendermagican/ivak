@@ -2,7 +2,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center">
         <div class="flex justify-between items-center md:w-auto w-full mb-4 md:mb-0">
             <a href="/ivak/php/index.php" class="text-3xl font-bold hover:text-gray-300 flex items-center">
-                <img src="https://cdn.discordapp.com/attachments/1194326610233536552/1220022484363902976/OIG3.png?ex=660d6d7b&is=65faf87b&hm=3a4774ce5b2a6d1085f14b6edb3178f9a1c52650bdad3c35f518b8e9bb566c24" alt="Quizzicle Logo" class="w-10 h-10 mr-2">Quizzicle
+                <img src="https://cdn.discordapp.com/attachments/1194326610233536552/1220022484363902976/OIG3.png?ex=660d6d7b&is=65faf87b&hm=3a4774ce5b2a6d1085f14b6edb3178f9a1c52650bdad3c35f518b8e9bb566c24" alt="Quizzicle Logo" class="w-10 h-10 mr-2 rounded-[50%]">Quizzicle
             </a>
             <div class="md:hidden">
                 <button id="mobile-menu-btn" class="focus:outline-none">
