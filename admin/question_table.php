@@ -9,11 +9,14 @@ if ($_SESSION["isAdmin"] != 1) {
 }
 
 // Fetch data from questions table along with their respective quizzes, subcategories, and categories
-$questionQuery = "SELECT questions.*, quizzes.quiz AS quiz_name, subcategories.subcategory AS subcategory_name, categories.category AS category_name
-                  FROM questions
-                  INNER JOIN quizzes ON questions.quiz_id = quizzes.id
-                  INNER JOIN subcategories ON quizzes.subcategory_id = subcategories.id
-                  INNER JOIN categories ON subcategories.category_id = categories.id";
+$questionQuery = "SELECT questions.*, quizzes.quiz AS quiz_name,
+subcategories.subcategory AS subcategory_name,
+categories.category AS category_name
+FROM questions
+INNER JOIN quizzes ON questions.quiz_id = quizzes.id
+INNER JOIN subcategories ON quizzes.subcategory_id = subcategories.id
+INNER JOIN categories ON subcategories.category_id = categories.id";
+
 $questionResult = mysqli_query($conn, $questionQuery);
 
 if (!$questionResult) {

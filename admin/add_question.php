@@ -12,9 +12,8 @@ if ($_SESSION["isAdmin"] != 1) {
     exit();
 }
 
-// Check if the form is submitted
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve form data
     $question_text = $_POST["question_text"];
     $img_src = $_POST["img_src"];
     $img_alt = $_POST["img_alt"];
@@ -25,17 +24,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $correct_answer_index = $_POST["correct_answer_index"];
     $quiz_id = $_POST["quiz_id"];
 
-    // Prepare and execute the SQL statement to insert data into the questions table
-    $sql = "INSERT INTO questions (question_text, img_src, img_alt, answer1, answer2, answer3, answer4, correct_answer_index, quiz_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $sql = "INSERT INTO questions (question_text, img_src, img_alt, answer1,
+     answer2, answer3, answer4, correct_answer_index, quiz_id) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("ssssssssi", $question_text, $img_src, $img_alt, $answer1, $answer2, $answer3, $answer4, $correct_answer_index, $quiz_id);
+        $stmt->bind_param("ssssssssi", $question_text, $img_src, $img_alt,
+         $answer1, $answer2, $answer3, $answer4, $correct_answer_index, $quiz_id);
         if ($stmt->execute()) {
             $successMsg = "Question added successfully.";
         } else {
             $errorMsg = "Error adding question: " . $stmt->error;
         }
-        // Close the statement
         $stmt->close();
     } else {
         $errorMsg = "Error preparing statement: " . $conn->error;

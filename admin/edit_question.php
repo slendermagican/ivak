@@ -60,7 +60,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateQuestion"])) {
     $newQuiz = mysqli_real_escape_string($conn, $_POST["quiz"]);
 
     // Update question details in the database
-    $updateQuery = "UPDATE questions SET question_text = '$newQuestionText', img_src = '$newImgSrc', img_alt = '$newImgAlt', answer1 = '$newAnswer1', answer2 = '$newAnswer2', answer3 = '$newAnswer3', answer4 = '$newAnswer4', correct_answer_index = $newCorrectAnswerIndex, quiz_id = (SELECT id FROM quizzes WHERE quiz = '$newQuiz') WHERE question_text = '$questionToEdit'";
+    $updateQuery = "UPDATE questions SET question_text = '$newQuestionText',
+    img_src = '$newImgSrc', 
+    img_alt = '$newImgAlt', 
+    answer1 = '$newAnswer1', 
+    answer2 = '$newAnswer2', 
+    answer3 = '$newAnswer3', 
+    answer4 = '$newAnswer4', 
+    correct_answer_index = $newCorrectAnswerIndex, 
+    quiz_id = (SELECT id FROM quizzes WHERE quiz = '$newQuiz') 
+    WHERE question_text = '$questionToEdit'";
+
     $updateResult = mysqli_query($conn, $updateQuery);
 
     if ($updateResult) {
@@ -146,23 +156,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateQuestion"])) {
                     </div>
 
                     <div class="mb-4">
-                        <label for="answer1" class="block text-gray-700 text-sm font-bold mb-2">Answer 1:</label>
-                        <input type="text" name="answer1" value="<?php echo $questionData['answer1']; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="answer2" class="block text-gray-700 text-sm font-bold mb-2">Answer 2:</label>
-                        <input type="text" name="answer2" value="<?php echo $questionData['answer2']; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="answer3" class="block text-gray-700 text-sm font-bold mb-2">Answer 3:</label>
-                        <input type="text" name="answer3" value="<?php echo $questionData['answer3']; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="answer4" class="block text-gray-700 text-sm font-bold mb-2">Answer 4:</label>
-                        <input type="text" name="answer4" value="<?php echo $questionData['answer4']; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Answers:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" name="answer1" value="<?php echo htmlspecialchars($questionData['answer1']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Answer 1" required>
+                            <input type="text" name="answer2" value="<?php echo htmlspecialchars($questionData['answer2']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Answer 2" required>
+                            <input type="text" name="answer3" value="<?php echo htmlspecialchars($questionData['answer3']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Answer 3" required>
+                            <input type="text" name="answer4" value="<?php echo htmlspecialchars($questionData['answer4']); ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Answer 4" required>
+                        </div>
                     </div>
 
                     <div class="mb-4">

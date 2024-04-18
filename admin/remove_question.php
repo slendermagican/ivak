@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["questionToRemove"])) {
 
     // Execute SQL query to delete question
     $deleteQuery = "DELETE FROM questions WHERE id = '$questionToRemove'";
+    
     $deleteResult = mysqli_query($conn, $deleteQuery);
 
     if ($deleteResult) {

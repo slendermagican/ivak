@@ -148,7 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
 
     </main>
 
-    <div class="fixed top-10 right-10 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg" id="timer">00:00:00</div>
+    <div class="fixed top-20 right-10 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg" id="timer">00:00:00</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
