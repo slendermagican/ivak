@@ -7,42 +7,41 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 $user_id = $_SESSION['user_id'];
+$index = 0; //for Question number
 
 if (isset($_GET['quiz_id'])) {
     $quiz_id = $_GET['quiz_id'];
 
-    // Check if the provided quiz_id exists in the quizzes table and is numeric
-    if (is_numeric($quiz_id)) {
-        $quiz_id = intval($quiz_id);
-    } else {
-        header("Location: error.php");
-        exit();
+    // Check if the provided quiz_id exists in the quizzes table
+    $quizQuery = "SELECT id FROM quizzes WHERE id = '$quiz_id'";
+    $quizResult = mysqli_query($conn, $quizQuery);
+
+    // Check if the query was successful
+    if (!$quizResult) {
+        die("Error: " . mysqli_error($conn));
     }
 
-    // Prepare SQL to check if the provided quiz_id exists in the quizzes table
-    $quizQuery = "SELECT id FROM quizzes WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $quizQuery);
-    mysqli_stmt_bind_param($stmt, "i", $quiz_id);
-    mysqli_stmt_execute($stmt);
-    $quizResult = mysqli_stmt_get_result($stmt);
+    // Fetch the quiz if it exists
+    $quiz = mysqli_fetch_assoc($quizResult);
 
     // If the quiz does not exist, redirect to the error page
-    if (!$quiz = mysqli_fetch_assoc($quizResult)) {
+    if (!$quiz) {
         header("Location: error.php");
         exit();
     }
 
     // Fetch question data from the database
-    $questionQuery = "SELECT * FROM questions WHERE quiz_id = ? ORDER BY id";
-    $stmt = mysqli_prepare($conn, $questionQuery);
-    mysqli_stmt_bind_param($stmt, "i", $quiz_id);
-    mysqli_stmt_execute($stmt);
-    $questionResult = mysqli_stmt_get_result($stmt);
-    $questions = mysqli_fetch_all($questionResult, MYSQLI_ASSOC);
+    $questionQuery = "SELECT * FROM questions WHERE quiz_id = $quiz_id";
+    $questionResult = mysqli_query($conn, $questionQuery);
 
-    // Check if there are no questions for the quiz
+    if (!$questionResult) {
+        die("Error: " . mysqli_error($conn));
+    }
+
+    $questions = mysqli_fetch_all($questionResult, MYSQLI_ASSOC);
     $hasQuestions = !empty($questions);
 } else {
+    // Redirect to error.php if no question ID is provided
     header("Location: error.php");
     exit();
 }
@@ -100,10 +99,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     header("Location: quiz_result.php");
     // echo "<script>window.location.href = 'quiz_result.php';</script>";
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -111,19 +112,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
     <script src="https://kit.fontawesome.com/5b1a9e5fe0.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 flex flex-col h-screen">
+
     <?php include "../components/header.php"; ?>
 
     <main class="flex-grow">
-        <form id="quizForm" action="<?php echo htmlspecialchars('quizresults.php'); ?>" method="post" onsubmit="return validateForm()">
+
+        <!-- Question Form -->
+        <form id="quizForm" action="<?php htmlspecialchars("quizresults.php") ?>" method="post" onsubmit="return validateForm()">
             <input type="hidden" name="startTime" value="<?php echo time(); ?>">
             <?php if ($hasQuestions): ?>
-                <?php foreach ($questions as $index => $question): ?>
-                    <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
-                        <h2 class="text-2xl font-bold">Question <?php echo $index + 1; ?></h2>
-                        <hr>
-                        <h3 class="my-4 text-xl"><?php echo htmlspecialchars($question['question_text']); ?></h3>
-                        <img src="<?php echo htmlspecialchars($question['img_src']) ?>" alt="<?php echo htmlspecialchars($question['img_alt']) ?>" class="w-full object-cover rounded-md mb-2" style="max-height: 70vh;">
+            <?php foreach ($questions as $question) {
+                $index++; ?>
+                <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
+                    <h2 class="text-2xl font-bold"><?php echo "Question " . ($index); ?></h2>
+                    <hr>
+                    <h3 class="my-4 text-2xl"><?php echo htmlspecialchars($question['question_text']); ?></h3>
+                    <img src="<?php echo htmlspecialchars($question['img_src']) ?>" alt="<?php echo htmlspecialchars($question['img_alt']) ?>" class="w-full object-cover rounded-md mb-2" style="max-height: 70vh;">
                     <div class="grid grid-cols-2 gap-4">
                         <?php for ($i = 1; $i <= 4; $i++) {
                             $isChecked = isset($_POST[$question['id']]) && $_POST[$question['id']] == $i;
@@ -135,11 +141,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
                             </label>
                         <?php } ?>
                     </div>
-                    </div>
-                <?php endforeach; ?>
-                <div class="flex justify-center mt-4 mb-4">
-                    <input type="submit" name="quizSubmit" value="Submit Quiz" class="w-2/5 py-2 rounded-md text-white bg-green-500 hover:bg-green-700 font-semibold shadow-md focus:outline-none focus:ring focus:border-blue-green transition duration-300 ease-in-out">
                 </div>
+            <?php } ?>
+            <div class="flex justify-center mt-4 mb-4">
+                <input type="submit" name="quizSubmit" class="w-2/5 py-2 rounded-md text-white bg-green-500 hover:bg-green-700 font-semibold shadow-md focus:outline-none focus:ring focus:border-blue-green transition duration-300 ease-in-out">
+            </div>
             <?php else: ?>
                 <div class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-md shadow-md text-center">
                     <h2 class="text-2xl font-bold">This quiz doesn't have any questions yet.</h2>
@@ -149,13 +155,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
                 </div>
             <?php endif; ?>
         </form>
+
     </main>
 
-    
     <div class="fixed top-20 right-10 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg" id="timer">00:00:00</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener to the parent element of radio buttons
             document.getElementById('quizForm').addEventListener('change', function(event) {
                 const target = event.target;
                 if (target.type === 'radio') {
@@ -163,6 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
                 }
             });
 
+            // Function to update radio button style
             function updateRadioStyle(radioButton) {
                 const siblings = Array.from(radioButton.parentElement.children);
                 siblings.forEach(sibling => {
@@ -173,12 +181,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
                 radioButton.nextElementSibling.classList.add('bg-green-500', 'focus:bg-green-300', 'hover:bg-green-700');
             }
 
-            
+            // Timer functionality
             const timerElement = document.getElementById('timer');
             const startTime = <?php echo time(); ?>;
 
             function updateTimer() {
-                const currentTime = Math.floor(Date.now() / 1000);
+                const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
                 const elapsedTime = currentTime - startTime;
                 const hours = Math.floor(elapsedTime / 3600);
                 const minutes = Math.floor((elapsedTime % 3600) / 60);
@@ -191,51 +199,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['quizSubmit'])) {
         });
 
         function validateForm() {
-            let allAnswered = true;
-            let alerted = false; 
-            let scrollToFirstUnanswered = true;
+            let allAnswered = true; // Assume all questions are answered
+            let alerted = false; // Flag to track if alert has been shown
+            let scrollToFirstUnanswered = true; // Flag to determine if scrolling is needed
 
-
+            // Iterate through each question
             const questions = document.querySelectorAll('.max-w-3xl');
             questions.forEach(question => {
                 const radios = question.querySelectorAll('[type=radio]');
-                let answered = false; 
+                let answered = false; // Assume no radio button is clicked for the current question
 
-
+                // Check if any radio button is clicked for the current question
                 radios.forEach(radio => {
                     if (radio.checked) {
-                        answered = true; 
+                        answered = true; // At least one radio button is clicked for the current question
                     }
                 });
 
+                // If no radio button is clicked for the current question
                 if (!answered) {
-                    allAnswered = false;
+                    allAnswered = false; // At least one question is unanswered
 
+                    // Scroll to the height of the first unanswered question relative to the viewport
                     if (scrollToFirstUnanswered) {
                         const rect = question.getBoundingClientRect();
                         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                         const offsetTop = rect.top + scrollTop;
 
+                        // Scroll to the first unanswered question
                         window.scrollTo({
                             top: offsetTop,
                             behavior: 'smooth'
                         });
 
-                        scrollToFirstUnanswered = false;
+                        scrollToFirstUnanswered = false; // Set to false to prevent further scrolling
                     }
 
+                    // Alert user to answer all questions (only once)
                     if (!alerted) {
                         alert("Please answer all questions before submitting.");
-                        alerted = true;
+                        alerted = true; // Set the flag to true after the first alert
                     }
                 }
             });
+            // Prevent form submission if any question is unanswered
             return allAnswered;
         }
     </script>
 
 
-
     <?php include "../components/footer.php"; ?>
+
 </body>
+
 </html>
