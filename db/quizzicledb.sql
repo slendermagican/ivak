@@ -1,3 +1,8 @@
+-- Create database
+CREATE DATABASE quizzicledb;
+
+-- Use the quiz database
+USE quizzicledb;
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
